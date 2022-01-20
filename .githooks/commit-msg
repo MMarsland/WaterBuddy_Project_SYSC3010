@@ -1,0 +1,11 @@
+#!/bin/sh
+# link with the local repo using `ln -sf $PWD/.githooks/* $PWD/.git/hooks/`
+
+# Run the script and get the return code if successful or if fails
+./scripts/commit-format.sh $1 && rc=$? || rc=$?
+echo return code : $rc
+if [ $rc -eq 1 ]
+then
+  printf "commit-msg hook failed (add --no-verify to bypass)\n"
+	exit 1
+fi
