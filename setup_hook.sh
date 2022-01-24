@@ -1,5 +1,5 @@
 #!/bin/bash
 
-# run to connect the .git/hooks directory to local repository .githooks directroy
-ln -sf $PWD/.githooks/* $PWD/.git/hooks/
-find . -type f ! -name "*.*" -exec chmod +x {} +
+git config core.hooksPath .githooks
+find .githooks -type f ! -name "*.*" -exec chmod +x {} +
+read -p "Press any key to exit..."
