@@ -1,3 +1,3 @@
-Student A: Michael Marsland
-Student B: Nick Milani
+Student A: Michael Marsland 
+Student B: Nick Milani 
 Student C: Caleb Turcotte
