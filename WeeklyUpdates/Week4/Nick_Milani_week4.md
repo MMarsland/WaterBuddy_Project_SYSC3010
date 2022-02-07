@@ -1,7 +1,7 @@
 ## Weekly Individual Project Update Report
 ### Group number: G7
 ### Student name: Nick Milani
-### Week: Week 3 (Jan 24th - Jan 30th)
+### Week: Week 4 (Jan 31st - Feb 6th)
 ___
 1. **How many hours did you spend on the project this week? (0-10)**\
 I spent roughly 8 hours on the project this week
@@ -24,5 +24,5 @@ I spent roughly 8 hours on the project this week
   - Finish up the project proposal
   - Finalize the list of hardware/parts required for our system
 
-6. ***Is anything blocking you that you need from others?***
+6. ***Is anything blocking you that you need from others?***\
 Nothing has been blocked or put on hold at this moment
