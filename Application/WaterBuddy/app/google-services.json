@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "571567331576",
+    "firebase_url": "https://water-buddy-79d13-default-rtdb.firebaseio.com",
+    "project_id": "water-buddy-79d13",
+    "storage_bucket": "water-buddy-79d13.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:571567331576:android:cd1e6a4fddde6b50a1830d",
+        "android_client_info": {
+          "package_name": "com.application.waterbuddy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "571567331576-eg2vsinspt61l877rmnfahe17l7gei2g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9u5VpKks9lUKqJ2W1SAZvbF1u6JgWh5k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "571567331576-eg2vsinspt61l877rmnfahe17l7gei2g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
