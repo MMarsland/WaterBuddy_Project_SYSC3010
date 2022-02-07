@@ -1,7 +1,7 @@
 ## Weekly Individual Project Update Report
 ### Group number: L3_G7
 ### Student name: Michael Marsland
-### Week: Week 4 (January 31-37)  
+### Week: Week 4 (January 31st - February 6th)  
 
 1. ***How many hours did you spend on the project this week? (0-10)***
    - Approximitely 7 hours
