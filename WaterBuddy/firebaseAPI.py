@@ -13,10 +13,10 @@ class FirebaseAPI():
         pass
 
     def sendMessage(self, src, dest, message):
-        self.database.child("Michael-Test").child("messages").push({"dest": dest, "src": src, "message": message})
+        self.database.child("messages").push({"dest": dest, "src": src, "message": message})
 
     def getMessages(self, id):
-        messages = self.database.child("Michael-Test").child("messages").get() #.order_by_child("dest").equal_to(f"{id}").get()
+        messages = self.database.child("messages").get() #.order_by_child("dest").equal_to(f"{id}").get()
         # Delete Messages
         #database.child("Michael-Test").child("messages").order_by_child("dest").equal_to(f"{id}").remove()
         objMessages = []
@@ -24,8 +24,17 @@ class FirebaseAPI():
             key = message.key()
             #print(key)
             messageVal = message.val()
-            #print(message["dest"])
+            #print(messageVal["dest"])
             if messageVal["dest"] == f"{id}":
                 objMessages.append(messageVal)
-                #self.database.child("Michael-Test").child("messages").child(f"{key}").remove()
+                self.database.child("messages").child(f"{key}").remove()
         return objMessages
+
+    def registerStation(self, stationID):
+        self.updateDatabase(f"stations/{stationID}", {"cupSize": 25, "dailyWater": 0, "humidity": 25, "mute": False, "waterFrequency": 0, "weeklyWater": 0})
+
+    def updateDatabase(self, path, payload):
+        dest = self.database
+        for child in path.split("/"):
+            dest = dest.child(child)
+        dest.set(payload)

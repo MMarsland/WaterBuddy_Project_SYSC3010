@@ -1,11 +1,26 @@
+#Imports 
+import sys
 import time
-import threading
 
-senseHatAvaliable = True
-from senseHatAPI import SenseHatAPI
-from senseHatAPISim import SenseHatAPISim
-import localDatabase
+# Local Classes
+from buzzer import Buzzer
+from display import Display
 from firebaseAPI import FirebaseAPI
+from flowSystem import FlowSystem
+from localDatabase import LocalDatabase
+try:
+    from senseHatSensors import SenseHatSensors
+    from senseHatDisplay import SenseHatDisplay
+except Exception:
+    pass
+
+# Simulator Classes
+sys.path.append('Simulators')
+from buzzerSim import BuzzerSim
+from displaySim import DisplaySim
+from flowSystemSim import FlowSystemSim
+from senseHatDisplaySim import SenseHatDisplaySim
+
 
 class WaterBuddy:
     def __init__(self):
@@ -13,23 +28,28 @@ class WaterBuddy:
         
         self.firebaseAPI = FirebaseAPI()
 
-        # Simulated Aspects
-        self.senseHatAPI = SenseHatAPISim()
+        # Simulated Aspects (When running on an RPi with senseHat you can pass in a real SenseHatDisplay())
+        self.display = Display(BuzzerSim(), SenseHatDisplaySim())
 
     def main(self):
         print("Device Established...")
-        self.senseHatAPI.displayMessage("Device Established...")
-        self.loop(0.1)
+        self.display.displayMessage(0, "Device Established...")
+        self.loop(1)
         
     def loop(self, delay):
         #print("Loop")
 
         # Push Message to Database
+        #try:
+        #    inputArr = input("Send a Message {dest,message}: ").split(",")
+        #    self.firebaseAPI.sendMessage(self.id, inputArr[0], inputArr[1])
+        #except Exception:
+        #    print("Failed to parse input and send message")
         try:
-            inputArr = input("Send a Message {dest,message}: ").split(",")
-            self.firebaseAPI.sendMessage(self.id, inputArr[0], inputArr[1])
-        except Exception:
-            print("Failed to parse input and send message")
+            inputName = input("Register a station: ")
+            self.firebaseAPI.registerStation(inputName)
+        except Exception as e:
+            print(f"Failed to register station: {e}")
 
         try:
             # Check Database for Messages directed at this senseHat
