@@ -2,9 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:id="@+id/main">
 
     <androidx.constraintlayout.widget.Guideline
         android:layout_width="wrap_content"
@@ -12,6 +15,13 @@
         android:id="@+id/horizontalguideline"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.2"/>
+
+    <TextView
+        android:id="@+id/identifier"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 
     <Spinner
@@ -24,17 +34,34 @@
 
 
     <Button
+        android:id="@+id/user_opt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Change Database"
-        android:onClick="change_db"
-        app:layout_constraintBottom_toBottomOf="@id/horizontalguideline"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:text="User Options"
+        android:onClick="load_options"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <Button
+        android:onClick="register_station_view"
+        android:id="@+id/register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Register Station"
+        app:layout_constraintTop_toBottomOf="@id/user_opt"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <Button
+        android:onClick="custom_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send Message"
+        app:layout_constraintTop_toBottomOf="@id/register"
         app:layout_constraintRight_toRightOf="parent" />
 
 
     <ScrollView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -42,29 +69,86 @@
         app:layout_constraintTop_toBottomOf="@id/horizontalguideline" >
 
         <TableLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Value 1"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/val1"
+
+
+            <TableRow>
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_weight="0.6"
+                    android:layout_height="wrap_content" />
+                <Button
+                    android:layout_weight="0.4"
+                    android:gravity="center"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Mute Notifications"/>
+            </TableRow>
+
+            <Space
+                android:layout_height="40dp"
                 />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Value 2"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/val2"
-                />
+            <TableRow>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:layout_height="wrap_content"
+                    android:text="Current Humidity:"/>
+                <TextView
+                    android:id="@+id/humidity"
+                    android:layout_weight="0.5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
 
+            <TableRow>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:layout_height="wrap_content"
+                    android:text="Daily Water intake (ml):"/>
+                <TextView
+                    android:id="@+id/dailyWater"
+                    android:layout_weight="0.5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
 
+            <TableRow>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:layout_height="wrap_content"
+                    android:text="Weekly Water intake (ml):"/>
+                <TextView
+                    android:id="@+id/weeklyWater"
+                    android:layout_weight="0.5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+
+            <Space
+                android:layout_height="40dp"
+            />
+
+            <TableRow>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:layout_height="wrap_content"
+                    android:text="Cup Size (ml):"/>
+                <EditText
+                    android:inputType="number"
+                    android:id="@+id/cupSize"
+                    android:layout_weight="0.5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <Button
+                    android:onClick="update_cupSize"
+                    android:text="confirm"/>
+            </TableRow>
         </TableLayout>
 
 

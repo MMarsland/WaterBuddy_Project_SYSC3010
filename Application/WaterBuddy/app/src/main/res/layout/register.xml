@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/horizontalguideline"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.25"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/verticalguideline"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.25"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.4"
+        android:background="@color/black"/>
+
+    <ScrollView
+        android:layout_width="0dp"
+        app:layout_constraintHeight_percent="0.5"
+        android:layout_height="0dp"
+        app:layout_constraintWidth_percent="0.5"
+        app:layout_constraintTop_toBottomOf="@id/horizontalguideline"
+        android:background="@color/teal_700"
+        app:layout_constraintLeft_toLeftOf="@id/verticalguideline">
+        <TableLayout
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Enter\n"/>
+
+
+            <EditText
+                android:id="@+id/station_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:hint="Enter Station Id" />
+
+            <Button
+                android:id="@+id/register_station"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Register Station"/>
+
+            <TextView
+                android:id="@+id/error_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </TableLayout>
+
+
+    </ScrollView>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
