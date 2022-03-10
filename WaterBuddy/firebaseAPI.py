@@ -1,7 +1,7 @@
 import pyrebase
 
 class FirebaseAPI():
-    def __init__(self):
+    def __init__(self, stationID):
         self.config = {
             "apiKey": "AIzaSyD9u5VpKks9lUKqJ2W1SAZvbF1u6JgWh5k",
             "authDomain": "water-buddy-79d13.firebaseapp.com",
@@ -9,8 +9,8 @@ class FirebaseAPI():
             "storageBucket": "water-buddy-79d13.appspot.com"
         }
         self.database = pyrebase.initialize_app(self.config).database()
-        # "project_number": "571567331576",
-        pass
+        
+        self.stationID = stationID
 
     def sendMessage(self, src, dest, message):
         self.database.child("messages").push({"dest": dest, "src": src, "message": message})
@@ -30,8 +30,16 @@ class FirebaseAPI():
                 self.database.child("messages").child(f"{key}").remove()
         return objMessages
 
-    def registerStation(self, stationID):
-        self.updateDatabase(f"stations/{stationID}", {"cupSize": 25, "dailyWater": 0, "humidity": 25, "mute": False, "waterFrequency": 0, "weeklyWater": 0})
+    def stationRegistered(self):
+        return (not self.database.child(f"stations/{self.stationID}").shallow().get().val() == None)
+
+    def registerStation(self):
+        self.updateDatabase(f"stations/{self.stationID}", {"cupSize": 25, "dailyWater": 0, "humidity": 25, "mute": False, "waterFrequency": 0, "weeklyWater": 0})
+
+    def updateHumidity(self, humidity):
+        self.updateDatabase(f"stations/{self.stationID}/humidity", humidity)
+
+
 
     def updateDatabase(self, path, payload):
         dest = self.database
