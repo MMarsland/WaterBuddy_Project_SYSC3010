@@ -1,4 +1,6 @@
 from sense_hat import SenseHat
+from random import randint
+import time
 
 class SenseHatDisplay():
     def __init__(self):
@@ -6,35 +8,18 @@ class SenseHatDisplay():
         pass
 
     def showMessage(self, message):
-        color="#ff0000"
-        speed=0.1
-        self.sense.show_message(message)
-    # def get_sensehat():
-    #     return SenseHat()
+        color = self.getRandomColour()
+        speed = 0.05
+        self.sense.show_message(message, text_colour=color, scroll_speed=speed)
 
-    # def alarm(sense, flash_time):
-    #     for second in range(0, math.ceil(flash_time/2)):
-    #         sense.clear((255,0,0))
-    #         time.sleep(1)
-    #         sense.clear()
-    #         time.sleep(1)
+    def flashWord(self, word, delay):
+        color = self.getRandomColour()
+        for letter in word:
+            self.sense.show_letter(letter, color)
+            time.sleep(delay)
 
-    # def getRandColour():
-    #     r = randint(0, 255)
-    #     g = randint(0, 255)
-    #     b = randint(0, 255)
-    #     return (r, g, b)
-
-    # def flashWord(word, delay):
-    #     for letter in word:
-    #         sense.show_letter(letter, getRandColour())
-    #         sleep(delay)
-
-    # def displayValue(valueStruct):
-    #     flashWord(valueStruct[0], 0.2)
-    #     sense.show_message("{:.2f}".format(valueStruct[1]),
-    #                         text_colour=getRandColour(), 
-    #                         scroll_speed=0.1)
-
-    # def displayMessage(message, color="#ff0000", speed=0.1):
-    #     sense.show_message(message, text_colour=color, scroll_speed=speed)
+    def getRandomColour(self,):
+         r = randint(50, 255)
+         g = randint(50, 255)
+         b = randint(50, 255)
+         return (r, g, b)

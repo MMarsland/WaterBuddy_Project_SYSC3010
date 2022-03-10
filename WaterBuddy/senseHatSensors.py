@@ -5,4 +5,4 @@ class SenseHatSensors():
         self.sense = SenseHat()
 
     def getHumidity(self):
-        return self.sense.get_humidity()
+        return round(self.sense.get_humidity(), 2)

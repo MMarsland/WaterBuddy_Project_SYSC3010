@@ -13,7 +13,7 @@ class Buzzer():
         GPIO.setup(self.BUZZER_PIN, GPIO.OUT)
 
     def playChime(self, code):
-        if code == 0:
+        if code == "local" or code == 0:
             # Locally Spawnned Notification
             pwm = GPIO.PWM(self.BUZZER_PIN, 1000) # Initial frequency: 1kHz
             pwm.start(self.dc)
@@ -23,10 +23,10 @@ class Buzzer():
             pwm.ChangeFrequency(3000)
             time.sleep(0.5)
             pwm.stop
-        elif code == 1:
+        elif code == "station" or code == 1:
                 # Other Water Buddy Notification
                 pass
-        elif code == 2:
+        elif code == "application" or code == 2:
                 # Other Application Notification
                 pass
             # More cases for more chime options, drink reminders, entertainment chimes, etc...
