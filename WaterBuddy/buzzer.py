@@ -1,11 +1,28 @@
+import RPi.GPIO as GPIO
+import time
+
 class Buzzer():
-    def __init__(self):
-        pass
-    
+
+    dc = 70 # Duty cycle for the PWM pin
+
+    def __init__(self, pin):
+        self.BUZZER_PIN = pin
+
+        # Setup GPIO pin
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.BUZZER_PIN, GPIO.OUT)
+
     def playChime(self, code):
         if code == 0:
-                # Locally Spawnned Notification
-                pass
+            # Locally Spawnned Notification
+            pwm = GPIO.PWM(self.BUZZER_PIN, 1000) # Initial frequency: 1kHz
+            pwm.start(self.dc)
+            time.sleep(0.5)
+            pwm.ChangeFrequency(2000)
+            time.sleep(0.5)
+            pwm.ChangeFrequency(3000)
+            time.sleep(0.5)
+            pwm.stop
         elif code == 1:
                 # Other Water Buddy Notification
                 pass
