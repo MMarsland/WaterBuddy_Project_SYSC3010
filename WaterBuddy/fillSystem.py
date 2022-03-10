@@ -1,11 +1,9 @@
 import RPi.GPIO as GPIO
 import time
 
-class FlowSystem():
+class FillSystem():
     def __init__(self):
         pass
-
-
 
 class CupSensor():
     def __init__(self, trigger, echo):

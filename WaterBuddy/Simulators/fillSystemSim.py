@@ -1,4 +1,4 @@
-class FlowSystemSim():
+class FillSystemSim():
     def __init__(self):
         pass
 

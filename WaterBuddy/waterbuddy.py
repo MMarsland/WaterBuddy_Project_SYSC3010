@@ -6,7 +6,7 @@ import time
 from buzzer import Buzzer
 from display import Display
 from firebaseAPI import FirebaseAPI
-from flowSystem import FlowSystem
+from fillSystem import FillSystem
 from localDatabase import LocalDatabase
 try:
     from senseHatSensors import SenseHatSensors
@@ -18,7 +18,7 @@ except Exception:
 sys.path.append('Simulators')
 from buzzerSim import BuzzerSim
 from displaySim import DisplaySim
-from flowSystemSim import FlowSystemSim
+from fillSystemSim import FillSystemSim
 from senseHatDisplaySim import SenseHatDisplaySim
 
 
