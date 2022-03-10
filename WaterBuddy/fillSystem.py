@@ -33,7 +33,7 @@ class CupSensor():
         elapsed = stopTime - startTime
         distance = (elapsed * 34300) / 2 # Distance = time * speed of sound (in cm/s)
         print("Distance: {:.3f} cm\n".format(distance))
-        #return distance
+        return distance
 
 class Relay():
     def __init__(self, pin):
