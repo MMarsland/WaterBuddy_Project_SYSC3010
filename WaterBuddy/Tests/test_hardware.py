@@ -1,4 +1,5 @@
 import time, sys
+import RPi.GPIO as GPIO
 sys.path.append('../')
 from fillSystem import CupSensor
 from fillSystem import Relay
@@ -22,4 +23,5 @@ while 1:
             relay.off()
     except KeyboardInterrupt:
             print("Exiting")
+            GPIO.cleanup()
             sys.exit()

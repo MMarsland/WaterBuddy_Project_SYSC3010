@@ -69,14 +69,14 @@ class FlowSensor():
         if _enable == 1:
             _edgeCount = _edgeCount + 1
 
-    # Poll the sensor for 1 second and return the flow rate
-    def getFlowRate(self):
+    # Poll the sensor for 'interval' seconds and return the flow rate
+    def getFlowRate(self, interval):
         global _edgeCount, _enable
         _edgeCount = 0
         _enable = 1
-        time.sleep(1)
+        time.sleep(interval)
         _enable = 0
 
-        flowRate = (_edgeCount / 11) # Frequency to flow rate conversion from sensor datasheet
+        flowRate = ((_edgeCount / interval) / 11) # Frequency to flow rate conversion from sensor datasheet
         print("Flow rate: {:.3f} L/min\n".format(flowRate))
-       #return flowRate
+        return flowRate
