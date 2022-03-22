@@ -5,5 +5,5 @@ from waterbuddy import WaterBuddy
 
 def test_init():
     #print("Running Test init")
-    wb = WaterBuddy(True, True)
+    wb = WaterBuddy("Station 1", True)
     assert (not wb == None)

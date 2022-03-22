@@ -1,21 +1,24 @@
 import sys
-sys.path.append('../../../WaterBuddy/')
-sys.path.append('../../../WaterBuddy/Simulators')
+sys.path.append('../../../')
+sys.path.append('../../../Simulators')
 from buzzerSim import BuzzerSim
+from senseHatDisplay import SenseHatDisplay
 
 def test_init():
-    buzzer = BuzzerSim()
+    buzzer = BuzzerSim(SenseHatDisplay())
     assert (not buzzer == None)
 
 def test_playChimeLocal():
-    buzzer = BuzzerSim()
+    buzzer = BuzzerSim(SenseHatDisplay())
     buzzer.playChime("local")
+    assert (input('\nDid you see a red flash? (y/n): ') == "y")
 
 def test_playChimeStation():
-    buzzer = BuzzerSim()
+    buzzer = BuzzerSim(SenseHatDisplay())
     buzzer.playChime("station")
+    assert (input('\nDid you see a green flash? (y/n): ') == "y")
 
 def test_playChimeApplication():
-    buzzer = BuzzerSim()
+    buzzer = BuzzerSim(SenseHatDisplay())
     buzzer.playChime("application")
-    assert (input('Did you see: "BuzzerSim.playChime("application")" (y/n): ') == "y")
+    assert (input('\nDid you see a blue flash? (y/n): ') == "y")
