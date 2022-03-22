@@ -5,6 +5,9 @@ class FillSystem():
     def __init__(self):
         pass
 
+    def poll():
+        pass
+
 class CupSensor():
     def __init__(self, trigger, echo):
         self.TRIGGER_PIN = trigger

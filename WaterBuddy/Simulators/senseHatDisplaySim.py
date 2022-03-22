@@ -1,3 +1,5 @@
+# DEPRECIATED (ONLY FOR RUNNING THE SYSTEM ON WINDOWS)
+
 class SenseHatDisplaySim():
     def __init__(self):
         pass

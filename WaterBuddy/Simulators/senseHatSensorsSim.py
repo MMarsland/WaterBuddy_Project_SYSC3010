@@ -1,3 +1,5 @@
+# DEPRECIATED (ONLY FOR RUNNING THE SYSTEM ON WINDOWS)
+
 from random import random
 
 class SenseHatSensorsSim():
