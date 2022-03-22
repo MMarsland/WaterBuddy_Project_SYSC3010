@@ -94,5 +94,7 @@ class FirebaseAPI():
                                                             "displayNotificationsFromFriends": stationData.displayNotificationsFromFriends})
 
     def ensureStationRegistered(self, stationData):
-        if (not self.firebaseAPI.isStationRegistered()):
-            self.firebaseAPI.registerStation(self.stationData)
+        print
+        if (not self.isStationRegistered()):
+            print("Registering Station")
+            self.registerStation(stationData)

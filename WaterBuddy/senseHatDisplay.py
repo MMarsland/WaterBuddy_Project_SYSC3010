@@ -18,6 +18,11 @@ class SenseHatDisplay():
             self.sense.show_letter(letter, color)
             time.sleep(delay)
 
+    def flash(self, color):
+        self.sense.clear(color)
+        time.sleep(0.5)
+        self.sense.clear()
+
     def getRandomColour(self,):
          r = randint(50, 255)
          g = randint(50, 255)

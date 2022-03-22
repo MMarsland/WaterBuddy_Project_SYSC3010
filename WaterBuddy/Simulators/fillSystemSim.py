@@ -2,8 +2,8 @@ from sense_hat import SenseHat
 import random
 
 class FillSystemSim():
-    def __init__(self):
-        pass
+    def __init__(self, senseHatDisplay):
+        self.senseHatDisplay = senseHatDisplay
 
     def poll(self):
         # Ultrasonic sensor triggered, run fill system!
@@ -57,7 +57,8 @@ class FlowSensorSim():
         return flowRate
 
 if __name__ == "__main__":
-    fs = FillSystemSim()
-    while True:
-        fs.poll()
-        time.sleep(3)
+    #fs = FillSystemSim()
+    #while True:
+        #fs.poll()
+        #time.sleep(3)
+    pass

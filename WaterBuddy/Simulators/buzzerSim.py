@@ -1,6 +1,6 @@
 class BuzzerSim():
-    def __init__(self):
-        pass
+    def __init__(self, senseHatDisplay):
+        self.senseHatDisplay = senseHatDisplay
     
     def playChime(self, code):
         if code == "local" or code == 0:
@@ -15,3 +15,4 @@ class BuzzerSim():
                 pass
             # More cases for more chime options, drink reminders, entertainment chimes, etc...
         print(f'BuzzerSim.playChime("{code}")')
+        self.senseHatDisplay.flash((255,0,0))

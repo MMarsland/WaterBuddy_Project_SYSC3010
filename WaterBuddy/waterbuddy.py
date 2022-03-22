@@ -14,20 +14,18 @@ try:
     from senseHatDisplay import SenseHatDisplay
     from fillSystem import FillSystem
     from buzzer import Buzzer
-except Exception:
-    pass
+except Exception as e:
+    print(e)
 
 # Simulator Classes
 sys.path.append('Simulators')
 from buzzerSim import BuzzerSim
 from fillSystemSim import FillSystemSim
-from senseHatDisplaySim import SenseHatDisplaySim
-from senseHatSensorsSim import SenseHatSensorsSim
 
 
 # Process for connection to new customer's internet?
 class WaterBuddy:
-    def __init__(self, stationID, simulateFillSystem, simulateRPi):
+    def __init__(self, stationID, simulator=False):
         self.stationID = stationID # "Can we get this from the hardware?" From local database maybe! Randomly generated first time? Unique
         self.waterFrequency = 3600
         self.lastHumidiySendTime = None
@@ -35,24 +33,21 @@ class WaterBuddy:
 
         self.firebaseAPI = FirebaseAPI(self.stationID)
         self.localDatabase = LocalDatabase()
+        self.sensors = SenseHatSensors()
 
-        if (simulateRPi):
-            # Simulated Aspects (When running on an RPi with senseHat you can pass in a real SenseHatDisplay())
-            self.display = Display(SenseHatDisplaySim(), BuzzerSim(SenseHatDisplaySim()))
-            self.sensors = SenseHatSensorsSim()
-        elif (simulateFillSystem):
+        if (simulator):
             self.display = Display(SenseHatDisplay(), BuzzerSim(SenseHatDisplay()))
-            self.sensors = SenseHatSensors()
+            self.fillSystem = FillSystemSim(SenseHatDisplay())
         else:
             self.display = Display(SenseHatDisplay(), Buzzer())
-            self.sensors = SenseHatSensors()
+            self.fillSystem = FillSystem()
 
         self.userData = UserData()
-        self.stationData = StationData(humidity=self.sensors.getHumidity())
+        self.stationData = StationData()
 
     def main(self):
-        print("Welcome to Water Buddy!")
-        self.display.displayMessage("local", "Welcome to Water Buddy!")
+        print("Welcome to WaterBuddy!")
+        self.display.displayMessage("local", "Welcome to WaterBuddy!")
 
         self.online = True
         try:
@@ -108,16 +103,16 @@ class WaterBuddy:
                     if (not self.stationData == stationData):
                         # Station Data changed: recalcualte waterFrequency, update local database
                         self.stationData = stationData
-                        print(self.stationData)
+                        #print(self.stationData)
                         #self.localDatabase.updateStationData(self.stationData)
                         dataChanged = True
 
                     # Check for updates in User data and update local datatbase & Recalculate Water Frequency (Perhaps we should set up streams for these)
-                    userData = self.firebaseAPI.getUserData()
+                    userData = self.firebaseAPI.getUserData(self.userData.userID)
                     if (not self.userData == userData):
                         # Station Data changed: recalcualte waterFrequency, update local database
                         self.userData = userData
-                        print(self.userData)
+                        #print(self.userData)
                         self.localDatabase.updateUserData(self.userData)
                         dataChanged = True
                     
@@ -127,14 +122,17 @@ class WaterBuddy:
                         self.localDatabase.updateStationData(self.stationData)
                         self.firebaseAPI.updateWaterFrequency(self.waterFrequency)
 
-                    # Upload Himidity to Database every second
-                    if (not self.lastHumidiySendTime or time.time() - self.lastHumidiySendTime > 5):
+                    # Upload Humidity to Database every second
+                    #print(self.lastHumidiySendTime)
+                    #print(time.time())
+                    if (not self.lastHumidiySendTime or (time.time() - self.lastHumidiySendTime > 5)):
                         self.lastHumidiySendTime = time.time()
                         # Get Humidity
                         humidity = self.sensors.getHumidity()
                         # Send Humidity
                         self.firebaseAPI.updateHumidity(humidity)
-                        print(f"Humidity of {humidity} uploaded at {datetime.now().strftime('%H:%M:%S')}")
+                        #print(f"Humidity of {humidity} uploaded at {datetime.now().strftime('%H:%M:%S')}")
+                        self.display.displayMessage("local", f"{humidity}")
 
                 # Check if we have come online
                 try:
@@ -143,7 +141,7 @@ class WaterBuddy:
                     # Now that we are online, Dispatch local "Drink water" notification if required
                     self.uploadWaterHistory()
 
-                except Exception as e:
+                except ConnectionError:
                     self.online = False
 
                 # Poll the ultrasonic sensor (Fill System (Start fill system thread + block another thread from starting))
@@ -219,7 +217,7 @@ class WaterBuddy:
 
 if __name__ == '__main__':
     try:
-        water_buddy = WaterBuddy("Station 1", True, True)
+        water_buddy = WaterBuddy("Station 1", True)
         water_buddy.main()
     except KeyboardInterrupt:
         print("Interrupeted")

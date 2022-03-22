@@ -29,14 +29,14 @@ class LocalDatabase():
         self.db.execute("select COUNT (*) FROM userData;")
         rowCount = self.db.fetchall()[0][0]
         if rowCount == 0:
-            userData = dataStructures.UserData()
+            userData = UserData()
             self.db.execute("insert into userData values (?, ?, ?, ?);", (userData.userID, userData.height, userData.weight, userData.thirst))
             self.connection.commit()
         
         self.db.execute("select COUNT (*) FROM stationData;")
         rowCount = self.db.fetchall()[0][0]
         if rowCount == 0:
-            stationData = dataStructures.StationData()
+            stationData = StationData()
             self.db.execute("insert into stationData values (?, ?);", (stationData.mute, stationData.cupSize))
             self.connection.commit()
 
@@ -96,6 +96,8 @@ class LocalDatabase():
         return userData
 
 if __name__ == "__main__":
-    ld = LocalDatabase()
-    ld.updateUserData(UserData(userID="Larry Bird", weight=50))
-    print(ld.getUserData())
+    #ld = LocalDatabase()
+    #ld.updateUserData(UserData(userID="Larry Bird", weight=50))
+    #print(ld.getUserData())
+    pass
+
