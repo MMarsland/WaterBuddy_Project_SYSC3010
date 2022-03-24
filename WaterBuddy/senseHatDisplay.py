@@ -17,6 +17,7 @@ class SenseHatDisplay():
         for letter in word:
             self.sense.show_letter(letter, color)
             time.sleep(delay)
+        self.sense.clear()
 
     def flash(self, color):
         self.sense.clear(color)

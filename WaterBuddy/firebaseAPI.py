@@ -22,6 +22,12 @@ class FirebaseAPI():
             dest = dest.child(child)
         dest.set(payload)
 
+    def getFromDatabase(self, path):
+        src = self.database
+        for child in path.split("/"):
+            src = src.child(child)
+        return src.get().val()
+
     # --- Message Passing ---
     def sendMessage(self, src, dest, message):
         self.database.child("messages").push({"dest": dest, "src": src, "message": message})
@@ -43,7 +49,7 @@ class FirebaseAPI():
 
     def getUserData(self, userID):
         data = self.database.child("users").child(userID).get().val()
-        return UserData(userID=data["userID"], friends=data.get("friends", []), stations=data.get("stations", []), isAdmin=data["isAdmin"], height=data["height"], weight=data["weight"], thirst=data["thirst"])
+        return UserData(userID=data.get("userID"), friends=data.get("friends", []), stations=data.get("stations", []), isAdmin=data.get("isAdmin"), height=data.get("height"), weight=data.get("weight"), thirst=data.get("thirst"))
 
     def getUserDataFromStationID(self):
         userID = ""
@@ -94,7 +100,6 @@ class FirebaseAPI():
                                                             "displayNotificationsFromFriends": stationData.displayNotificationsFromFriends})
 
     def ensureStationRegistered(self, stationData):
-        print
         if (not self.isStationRegistered()):
             print("Registering Station")
             self.registerStation(stationData)

@@ -69,7 +69,7 @@ class LocalDatabase():
         rows = self.db.fetchall()
         waterHistory = []
         for row in rows:
-            waterHistory.append(WaterHistory(datetime=row[0], amount=row[1]))
+            waterHistory.append(WaterData(datetime=row[0], amount=row[1]))
         return waterHistory
 
     def deleteWaterHistory(self):
