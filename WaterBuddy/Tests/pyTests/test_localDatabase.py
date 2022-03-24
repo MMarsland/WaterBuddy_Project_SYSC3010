@@ -11,7 +11,7 @@ from dataStructures import StationData
 from dataStructures import WaterData
 
 def test_init():
-    testDatabasePath = "local_database.py"
+    testDatabasePath = "local_database.db"
     if os.path.exists(testDatabasePath):
         os.remove(testDatabasePath)
 
@@ -84,3 +84,7 @@ def test_deleteWaterHistory():
 
     assert len(db.getWaterHistory()) == 0
         
+def test_cleanUp():
+    testDatabasePath = "local_database.db"
+    if os.path.exists(testDatabasePath):
+        os.remove(testDatabasePath)
