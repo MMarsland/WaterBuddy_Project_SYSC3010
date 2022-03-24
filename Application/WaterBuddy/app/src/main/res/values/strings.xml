@@ -2,4 +2,6 @@
     <string name="app_name">Water Buddy</string>
     <string name="login_error">Error Logging Into Account</string>
     <string name="account_error">Error Creating Account</string>
+    <string name="register_success">Successfully added station!</string>
+    <string name="register_fail">Error adding station</string>
 </resources>

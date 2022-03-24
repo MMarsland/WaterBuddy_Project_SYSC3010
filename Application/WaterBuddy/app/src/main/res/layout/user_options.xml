@@ -38,6 +38,97 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <TextView
+                android:gravity="center"
+                android:textSize="20sp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="User Settings"/>
+
+            <Space
+                android:layout_height="30dp"
+                />
+
+            <TableRow>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:layout_height="wrap_content"
+                    android:text="Height (cm):"/>
+                <EditText
+                    android:inputType="numberDecimal"
+                    android:id="@+id/height"
+                    android:layout_weight="0.5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:layout_height="wrap_content"
+                    android:text="Weight (kg):"/>
+                <EditText
+                    android:inputType="numberDecimal"
+                    android:id="@+id/weight"
+                    android:layout_weight="0.5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:layout_height="wrap_content"
+                    android:text="Thirst:"/>
+                <Spinner
+                    android:id="@+id/thirst"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:layout_height="wrap_content"
+                    />
+            </TableRow>
+
+            <Button
+                android:id="@+id/settings_button"
+                android:text="Edit Settings"/>
+
+            <Space
+                android:layout_height="40dp"
+                />
+
+            <TableRow>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:layout_height="wrap_content"
+                    android:text="Friend Id:"/>
+                <EditText
+                    android:inputType="numberDecimal"
+                    android:id="@+id/friend_id"
+                    android:layout_weight="0.5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+
+            <Button
+                android:id="@+id/friend_add"
+                android:text="Add Friend"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/friend_message"
+                />
+
+
+            <Space
+                android:layout_height="40dp"
+                />
+
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -10,7 +10,7 @@ public class Station {
     public double humidity;
     public double cupSize;
     public int waterFrequency;
-    public String id;
+    public String stationID;
     public String notification;
     public boolean mute;
     public WaterHistory waterHistory;
@@ -21,7 +21,7 @@ public class Station {
 
     public Station (String id, double cupSize) {
         this.cupSize = cupSize;
-        this.id = id;
+        this.stationID = id;
         humidity = 25;
 
     }

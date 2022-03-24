@@ -22,10 +22,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,15 +34,10 @@ import java.util.List;
  */
 public class MainActivity extends AppCompatActivity {
 
-    private DatabaseReference userRef, stationRef, messageRef;
     private ArrayList<Station> sReference;
     private Spinner selection;
     private int selected_index;
-
-    private ArrayList<String> users;
-    private ArrayList<User> userList;
-
-    private User username;
+    private DatabaseInterface dbInterface;
 
     public static final String PREFS_NAME = "MyPrefsFile";
     static SharedPreferences settings;
@@ -55,16 +49,10 @@ public class MainActivity extends AppCompatActivity {
 
         settings = getSharedPreferences(PREFS_NAME, 0);
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-
-        userRef = database.getReference("users");
-        stationRef = database.getReference("stations");
-        messageRef = database.getReference("messages");
+        dbInterface = new DatabaseInterface();
 
 
         sReference = new ArrayList<>();
-        users = new ArrayList<>();
-        userList = new ArrayList<>();
         selected_index = 0;
 
         selection = findViewById(R.id.selector);
@@ -96,23 +84,7 @@ public class MainActivity extends AppCompatActivity {
      * @param userid Username for the account
      */
     public void load_layout(String userid) {
-        ValueEventListener userListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    if(snapshot.getKey().equals(userid)) {
-                        username = snapshot.getValue(User.class);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.w(TAG, "loadStation:onCancelled", databaseError.toException());
-            }
-        };
-        userRef.addValueEventListener(userListener);
+        dbInterface.load(userid);
 
         TextView identifier = findViewById(R.id.identifier);
         identifier.setText(userid);
@@ -124,11 +96,12 @@ public class MainActivity extends AppCompatActivity {
                 // Get Station objects and use the values to update the UI
                 sReference.clear();
                 List<String> station_vals = new ArrayList<>();
-                if (username.stations == null ) {
-                    username.stations = new ArrayList<>();
+                if (dbInterface.username.stations == null ) {
+                    dbInterface.username.stations = new ArrayList<>();
                 }
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    if (username.stations.contains(snapshot.getKey()) || username.isAdmin) {
+                    if (dbInterface.username.stations.contains(snapshot.getKey())
+                            || dbInterface.username.isAdmin) {
                         station_vals.add(snapshot.getKey());
                         sReference.add(snapshot.getValue(Station.class));
                     }
@@ -147,49 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.w(TAG, "loadStation:onCancelled", databaseError.toException());
             }
         };
-        stationRef.addValueEventListener(stationListener);
-    }
-
-    /**
-     * Attempt to log in to user account
-     * @param user Username string
-     * @param password Password string
-     * @return False if login fails
-     */
-    public boolean login(String user, String password) {
-        if(user.equals("") || password.equals("")) {
-            return false;
-        }
-        if (users.contains(user)) {
-            // check password
-            for (User tempuser : userList) {
-                if (tempuser.passwordHASH.equals(password)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Create a new user account
-     * @param user Account username
-     * @param password Account password
-     * @return False if the account already exists
-     */
-    public boolean create_account(String user, String password) {
-        if(user.equals("") || password.equals("")) {
-            return false;
-        }
-        if (!users.contains(user)) {
-            ArrayList<String> stations = new ArrayList<>();
-            ArrayList<String> friends = new ArrayList<>();
-
-            User tempUser = new User(user,password, stations, friends);
-            userRef.child(tempUser.username).setValue(tempUser);
-            return true;
-        }
-        return false;
+        dbInterface.stationRef.addValueEventListener(stationListener);
     }
 
     /**
@@ -224,17 +155,17 @@ public class MainActivity extends AppCompatActivity {
 
         Spinner user_select = messageView.findViewById(R.id.friend_select);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, users);
+                android.R.layout.simple_spinner_item, dbInterface.users);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         user_select.setAdapter(adapter);
-        user_select.setSelection(users.indexOf(username.username));
+        user_select.setSelection(dbInterface.users.indexOf(dbInterface.username.userID));
 
         Spinner station_select = messageView.findViewById(R.id.station_select);
 
         user_select.setOnItemSelectedListener( new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                set_message_stations(userList.get(user_select.getSelectedItemPosition()), station_select);
+                set_message_stations(dbInterface.userList.get(user_select.getSelectedItemPosition()), station_select);
             }
 
             @Override
@@ -246,7 +177,8 @@ public class MainActivity extends AppCompatActivity {
         Button message_button = messageView.findViewById(R.id.send_message);
 
         message_button.setOnClickListener(v -> {
-            messageRef.push().setValue(new Message(username.username, station_select.getSelectedItem().toString(), message.getText().toString()));
+            dbInterface.messageRef.push().setValue(new Message(dbInterface.username.userID,
+                    station_select.getSelectedItem().toString(), message.getText().toString()));
             messageWindow.dismiss();
         });
 
@@ -259,6 +191,9 @@ public class MainActivity extends AppCompatActivity {
      * @param station_select Spinner to set values for
      */
     public void set_message_stations(User selected_user, Spinner station_select){
+        if (selected_user.stations == null) {
+            selected_user.stations = new ArrayList<>();
+        }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, selected_user.stations);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -285,11 +220,11 @@ public class MainActivity extends AppCompatActivity {
         TextView errortext = registerView.findViewById(R.id.error_text);
 
         message_button.setOnClickListener(v -> {
-            if(register_station(station_name.getText().toString())) {
-                errortext.setText("Successfully added station!");
+            if(dbInterface.register_station(station_name.getText().toString())) {
+                errortext.setText(R.string.register_success);
             }
             else {
-                errortext.setText("Error adding station");
+                errortext.setText(R.string.register_fail);
             }
         });
 
@@ -297,29 +232,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Register station with user account
-     * @return true if the station was added
-     */
-    public boolean register_station(String station_name) {
-        if (username.stations == null) {
-            username.stations = new ArrayList<>();
-        }
-        if (!username.stations.contains(station_name)) {
-            username.stations.add(station_name);
-            userRef.child(username.username).setValue(username);
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    /**
      * Update cupSize for selected child
      */
     public void update_cupSize(View v) {
         EditText cupSize = findViewById(R.id.cupSize);
-        stationRef.child(sReference.get(selected_index).id).child("cupSize").setValue(cupSize.getText().toString());
+        dbInterface.stationRef.child(sReference.get(selected_index).stationID).child("cupSize").setValue(Double.parseDouble(cupSize.getText().toString()));
     }
 
     /**
@@ -327,7 +244,6 @@ public class MainActivity extends AppCompatActivity {
      * @param view The main view for the button click
      */
     public void load_options(View view) {
-        // display options
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(LAYOUT_INFLATER_SERVICE);
         assert inflater != null;
@@ -338,6 +254,24 @@ public class MainActivity extends AppCompatActivity {
         optionsWindow.setOutsideTouchable(true);
         optionsWindow.setElevation(20);
         Button message_button = optionsView.findViewById(R.id.logout);
+        Button settings_button = optionsView.findViewById(R.id.settings_button);
+        Button friend_add = optionsView.findViewById(R.id.friend_add);
+
+        EditText user_height = optionsView.findViewById(R.id.height);
+        EditText user_weight = optionsView.findViewById(R.id.weight);
+        EditText friend_id = optionsView.findViewById(R.id.friend_id);
+
+        Spinner thirst = optionsView.findViewById(R.id.thirst);
+        ArrayList<String> thirst_list = new ArrayList<>();
+
+        Collections.addAll(thirst_list, "Hydrophobic", "Average", "Thirsty", "Parched");
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, thirst_list);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        thirst.setAdapter(adapter);
+        thirst.setSelection(dbInterface.username.thirst);
+
+        TextView friend_message = optionsView.findViewById(R.id.friend_message);
 
         message_button.setOnClickListener(v -> {
             log_out();
@@ -345,32 +279,29 @@ public class MainActivity extends AppCompatActivity {
             sign_in();
         });
 
+        settings_button.setOnClickListener(v -> {
+            dbInterface.username.height = Double.parseDouble(user_height.getText().toString());
+            dbInterface.username.weight = Double.parseDouble(user_weight.getText().toString());
+            dbInterface.username.thirst = thirst.getSelectedItemPosition();
+            dbInterface.userRef.child(dbInterface.username.userID).setValue(dbInterface.username);
+        });
+
+        friend_add.setOnClickListener(v -> {
+            String message = "Please enter an id";
+            if (!friend_id.getText().toString().equals("")) {
+                message = dbInterface.add_friend(friend_id.getText().toString());
+            }
+            friend_message.setText(message);
+        });
+
         optionsWindow.showAtLocation(findViewById(R.id.main), Gravity.CENTER, 0, 0);
-        // update userRef parts
     }
 
     /**
      * log in info for system
      */
     public void sign_in() {
-        ValueEventListener userListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                users.clear();
-                userList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    users.add(snapshot.getKey());
-                    userList.add(snapshot.getValue(User.class));
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.w(TAG, "loadStation:onCancelled", databaseError.toException());
-            }
-        };
-        userRef.addValueEventListener(userListener);
+        dbInterface.sign_in();
 
         String userid = settings.getString("userid", null);
         if (userid == null) {
@@ -388,7 +319,7 @@ public class MainActivity extends AppCompatActivity {
             TextView error = loginView.findViewById(R.id.error);
 
             loginView.findViewById(R.id.create_account).setOnClickListener(v -> {
-                if (create_account(username.getText().toString(), password.getText().toString())) {
+                if (dbInterface.create_account(username.getText().toString(), password.getText().toString())) {
                     SharedPreferences.Editor editor = settings.edit();
                     editor.putString("userid", username.getText().toString());
                     editor.apply();
@@ -400,7 +331,7 @@ public class MainActivity extends AppCompatActivity {
             });
 
             loginView.findViewById(R.id.login).setOnClickListener(v -> {
-                if (login(username.getText().toString(), password.getText().toString())) {
+                if (dbInterface.login(username.getText().toString(), password.getText().toString())) {
                     SharedPreferences.Editor editor = settings.edit();
                     editor.putString("userid", username.getText().toString());
                     editor.apply();
