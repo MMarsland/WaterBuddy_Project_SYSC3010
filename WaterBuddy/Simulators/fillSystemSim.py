@@ -4,18 +4,18 @@ import random
 class FillSystemSim():
     def __init__(self, senseHatDisplay):
         self.senseHatDisplay = senseHatDisplay
+        self.cupSensor = CupSensorSim()
 
     def poll(self):
+        
         # Ultrasonic sensor triggered, run fill system!
 
         # Simulate fill system
 
         # addWater History
-        pass
 
         # NEED TO RESEARCH PASSING DATA FROM A THREAD so we can get water data/call a function...
-
-
+        pass
 
 class CupSensorSim():
     def __init__(self):
