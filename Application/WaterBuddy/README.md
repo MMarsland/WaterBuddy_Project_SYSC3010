@@ -4,6 +4,9 @@
 Android based application for monitoring and adjusting realtime firebase data
 
 
+## Unit Test
+Unit Test Demo file can be found [here](app/src/androidTest/java/com/application/waterbuddy/UnitTest.java)
+
 ## Version info
 Java based Android application with the following Android Studio version
 
