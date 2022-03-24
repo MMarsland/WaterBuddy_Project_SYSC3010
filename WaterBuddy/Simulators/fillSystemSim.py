@@ -19,16 +19,14 @@ class FillSystemSim():
 
 class CupSensorSim():
     def __init__(self):
-        pass
+        self.sense = SenseHat()
     
     def getDistance(self):
         distance = 10.0000
 
-        sense = SenseHat()
-        for event in sense.stick.get_events():
-            if f"{event.direction}" == "middle":
+        for event in self.sense.stick.get_events():
+            if event.direction == "middle":
                 distance = 2.0000
-                pass
         #print("Distance: {:.3f} cm\n".format(distance))
         return distance
 
