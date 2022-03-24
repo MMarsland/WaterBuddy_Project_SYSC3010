@@ -4,6 +4,8 @@ sys.path.append('../../../Simulators')
 from buzzerSim import BuzzerSim
 from senseHatDisplay import SenseHatDisplay
 
+# Tests that require user input must be run with "pytest -s"
+
 def test_init():
     buzzer = BuzzerSim(SenseHatDisplay())
     assert (not buzzer == None)
