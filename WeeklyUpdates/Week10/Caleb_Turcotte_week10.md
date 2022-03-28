@@ -1,7 +1,7 @@
 ## Weekly Individual Project Update Report
 ### Group number: G7
 ### Student name: Caleb Turcotte
-### Week: 9 (14 Mar - 20 Mar)
+### Week: 10 (21 Mar - 27 Mar)
 ___
 1. **How many hours did you spend on the project this week? (0-10)** \
     10 hours were spent
