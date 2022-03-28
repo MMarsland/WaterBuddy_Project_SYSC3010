@@ -40,7 +40,7 @@ class WaterBuddy:
             self.fillSystem = FillSystemSim(SenseHatDisplay())
         else:
             self.display = Display(SenseHatDisplay(), Buzzer())
-            self.fillSystem = FillSystem()
+            self.fillSystem = FillSystem(self)
 
         self.userData = UserData()
         self.stationData = StationData()
@@ -103,8 +103,6 @@ class WaterBuddy:
                     if (not self.stationData == stationData):
                         # Station Data changed: recalcualte waterFrequency, update local database
                         self.stationData = stationData
-                        #print(self.stationData)
-                        #self.localDatabase.updateStationData(self.stationData)
                         dataChanged = True
 
                     # Check for updates in User data and update local datatbase & Recalculate Water Frequency (Perhaps we should set up streams for these)
@@ -112,7 +110,6 @@ class WaterBuddy:
                     if (not self.userData == userData):
                         # Station Data changed: recalcualte waterFrequency, update local database
                         self.userData = userData
-                        #print(self.userData)
                         self.localDatabase.updateUserData(self.userData)
                         dataChanged = True
                     
@@ -122,9 +119,7 @@ class WaterBuddy:
                         self.localDatabase.updateStationData(self.stationData)
                         self.firebaseAPI.updateWaterFrequency(self.waterFrequency)
 
-                    # Upload Humidity to Database every second
-                    #print(self.lastHumidiySendTime)
-                    #print(time.time())
+                    # Upload Humidity to Database every delay
                     if (not self.lastHumidiySendTime or (time.time() - self.lastHumidiySendTime > 5)):
                         self.lastHumidiySendTime = time.time()
                         # Get Humidity
@@ -132,7 +127,6 @@ class WaterBuddy:
                         # Send Humidity
                         self.firebaseAPI.updateHumidity(humidity)
                         #print(f"Humidity of {humidity} uploaded at {datetime.now().strftime('%H:%M:%S')}")
-                        self.display.displayMessage("local", f"{humidity}")
 
                 # Check if we have come online
                 try:
@@ -146,8 +140,13 @@ class WaterBuddy:
 
                 # Poll the ultrasonic sensor (Fill System (Start fill system thread + block another thread from starting))
                 # This will run the whole fill system process which results in updates the water history (see "WaterBuddy.addWaterHistory") (Should also potentially notify friends)
-                self.fillSystem.poll()
+                if not self.fillSystem.filling:
+                    self.fillSystem.poll()
                 # Maybe check if fillSystem thread is complete? Need to pass data from the thread? Can a thread make a callback on this thread?
+
+                if self.fillSystem.waterData:
+                    self.addWaterHistory(self.fillSystem.waterData)
+                    self.fillSystem.waterData = None
 
             except ConnectionError:
                 self.online = False

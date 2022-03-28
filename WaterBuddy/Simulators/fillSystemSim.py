@@ -1,21 +1,41 @@
 from sense_hat import SenseHat
 import random
+import threading
+import time
+import sys
+sys.path.append('../')
+from dataStructures import WaterData
+
 
 class FillSystemSim():
     def __init__(self, senseHatDisplay):
         self.senseHatDisplay = senseHatDisplay
         self.cupSensor = CupSensorSim()
 
-    def poll(self):
+        self.filling = False
+        self.waterData = None
         
+    def poll(self):
         # Ultrasonic sensor triggered, run fill system!
+        if self.cupSensor.triggered():
+            # Start a new thread for the fill system, simulate fill system
+            x = threading.Thread(target=self.fillSystemThread, daemon=True)
+            x.start()
 
-        # Simulate fill system
+    def fillSystemThread(self):
+        self.filling = True
+        
+        self.senseHatDisplay.flash((0,255,0))
+        
+        time.sleep(5)
+        waterData = WaterData(amount=random.randint(460,500))
 
-        # addWater History
+        self.senseHatDisplay.flash((255,255,0))
+    
+        self.waterData = waterData
+        self.filling = False
+        
 
-        # NEED TO RESEARCH PASSING DATA FROM A THREAD so we can get water data/call a function...
-        pass
 
 class CupSensorSim():
     def __init__(self):
@@ -30,29 +50,34 @@ class CupSensorSim():
         #print("Distance: {:.3f} cm\n".format(distance))
         return distance
 
-class RelaySim():
-    def __init__(self):
-        pass
+    def triggered(self):
+        return self.getDistance() < 3
 
-    def on(self):
-        print("RelaySim.on()")
 
-    def off(self):
-        print("RelaySim.off()")
 
-class FlowSensorSim():
-    def __init__(self):
-        pass
+# class RelaySim():
+#     def __init__(self):
+#         pass
 
-    def detectEdge(self, channel):
-        print("FlowSensorSim.detectEdge()")
+#     def on(self):
+#         print("RelaySim.on()")
 
-    # Poll the sensor for 'interval' seconds and return the flow rate
-    def getFlowRate(self, interval):
+#     def off(self):
+#         print("RelaySim.off()")
 
-        flowRate = random.random()*10
-        print("Flow rate: {:.3f} L/min\n".format(flowRate))
-        return flowRate
+# class FlowSensorSim():
+#     def __init__(self):
+#         pass
+
+#     def detectEdge(self, channel):
+#         print("FlowSensorSim.detectEdge()")
+
+#     # Poll the sensor for 'interval' seconds and return the flow rate
+#     def getFlowRate(self, interval):
+
+#         flowRate = random.random()*10
+#         print("Flow rate: {:.3f} L/min\n".format(flowRate))
+#         return flowRate
 
 if __name__ == "__main__":
     #fs = FillSystemSim()

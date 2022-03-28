@@ -1,12 +1,44 @@
 import RPi.GPIO as GPIO
 import time
+import threading
+from dataStructures import WaterData
 
 class FillSystem():
-    def __init__(self):
-        pass
+    def __init__(self, waterBuddy):
+        self.waterBuddy = waterBuddy
+        self.cupSensor = CupSensor()
+        self.relay = Relay()
+        self.flowSensor = FlowSensor()
 
-    def poll():
-        pass
+        self.cupFillMargin = 50 # How many mL to fill short of the cupSize
+
+
+        self.waterData = None
+        self.filling = False
+
+
+    def poll(self):
+        if (self.cupSensor.triggered()):
+            self.filling = True
+
+            filLThread = threading.Thread(target=self.fillSystemThread, daemon=True)
+            fillThread.start()
+
+
+    def fillSystemThread(self):
+        # Run the whole fill system process
+
+        # Turn on Relay
+
+        # Loop polling Flow Sensor (Recording amount flowed)
+        amount = 420
+
+        # Turn off relay when amount flowed is nearing cupsize
+        # if (amount > self.waterBuddy.stationData.cupSize - self.cupFillMargin)
+        
+        # When the whole process is done return a new waterdata with the amount filled
+        self.waterData = WaterData(amount=amount)
+        self.filling = False
 
 class CupSensor():
     def __init__(self, trigger, echo):
@@ -37,6 +69,9 @@ class CupSensor():
         distance = (elapsed * 34300) / 2 # Distance = time * speed of sound (in cm/s)
         print("Distance: {:.3f} cm\n".format(distance))
         return distance
+
+    def triggered(self):
+        return self.getDistance() < 3
 
 class Relay():
     def __init__(self, pin):
