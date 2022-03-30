@@ -28,11 +28,10 @@ class FirebaseAPI():
         return src.get().val()
 
     # --- Message Passing ---
-    def sendMessage(self, dest, message, extras):
+    def sendMessage(self, dest, message, extras={}):
         message = {"source": self.stationID, "dest": dest, "message": message, "extras": {}}
         for key, extra in extras.items():
             message.get("extras")[key] = extra
-        print(message)
         self.database.child("messages").push(message)
 
     def getMessages(self):
