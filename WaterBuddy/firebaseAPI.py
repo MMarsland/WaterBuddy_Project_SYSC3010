@@ -1,10 +1,11 @@
 import pyrebase
-from dataStructures import StationData
-from dataStructures import UserData
-from dataStructures import WaterData
+from dataStructures import StationData, UserData, Message
+
 
 class FirebaseAPI():
     def __init__(self, stationID):
+        self.stationID = stationID
+
         self.config = {
             "apiKey": "AIzaSyD9u5VpKks9lUKqJ2W1SAZvbF1u6JgWh5k",
             "authDomain": "water-buddy-79d13.firebaseapp.com",
@@ -12,9 +13,7 @@ class FirebaseAPI():
             "storageBucket": "water-buddy-79d13.appspot.com"
         }
         self.database = pyrebase.initialize_app(self.config).database()
-        
-        self.stationID = stationID
-    
+
     # --- Generic Database Update ---
     def updateDatabase(self, path, payload):
         dest = self.database
@@ -29,75 +28,93 @@ class FirebaseAPI():
         return src.get().val()
 
     # --- Message Passing ---
-    def sendMessage(self, src, dest, message):
-        self.database.child("messages").push({"dest": dest, "src": src, "message": message})
+    def sendMessage(self, dest, message, extras):
+        message = {"source": self.stationID, "dest": dest, "message": message, "extras": {}}
+        for key, extra in extras.items():
+            message.get("extras")[key] = extra
+        print(message)
+        self.database.child("messages").push(message)
 
     def getMessages(self):
-        messages = self.database.child("messages").order_by_child("dest").equal_to(self.stationID).get()
-        
-        objMessages = []
-        for message in messages.each():
-            objMessages.append(message.val())
-            self.database.child("messages").child(message.key()).remove()
-        return objMessages
+        rawMessages = self.database.child("messages")\
+                       .order_by_child("dest")\
+                       .equal_to(self.stationID).get()
 
-    
+        messages = []
+        for rawMessage in rawMessages.each():
+            messageValue = rawMessage.val()
+            
+            messages.append(Message(source=messageValue.get("source"), 
+                                    dest=messageValue.get("dest"), 
+                                    message=messageValue.get("message"),
+                                    extras=messageValue.get("extras", {})))
+
+            self.database.child("messages").child(rawMessage.key()).remove()
+        return messages
+
     # --- Data Retrival ---
     def getStationData(self):
-        data = self.database.child("stations").child(self.stationID).get().val()
-        return StationData(cupSize=data["cupSize"], mute=data["mute"], displayNotificationsFromFriends=data["displayNotificationsFromFriends"])
+        stationData = self.database.child("stations").child(self.stationID).get().val()
+        return StationData(cupSize=stationData.get("cupSize"),
+                           mute=stationData.get("mute"),
+                           displayNotificationsFromFriends=stationData.get("displayNotificationsFromFriends"))
 
     def getUserData(self, userID):
-        data = self.database.child("users").child(userID).get().val()
-        return UserData(userID=data.get("userID"), friends=data.get("friends", []), stations=data.get("stations", []), isAdmin=data.get("isAdmin"), height=data.get("height"), weight=data.get("weight"), thirst=data.get("thirst"))
+        userData = self.database.child("users").child(userID).get().val()
+        return UserData(userID=userData.get("userID"),
+                        friends=userData.get("friends", []),
+                        stations=userData.get("stations", []),
+                        isAdmin=userData.get("isAdmin"),
+                        height=userData.get("height"),
+                        weight=userData.get("weight"),
+                        thirst=userData.get("thirst"))
 
     def getUserDataFromStationID(self):
         userID = ""
-        # Find the (first) user that owns this station
-        # For the scope of the project this works (If large list of users this would likely break the program...)
+        # Pulling all users works for the scope of the project
+        # but would need to be refined for production scale
         users = self.database.child("users").order_by_key().get()
         for user in users.each():
-            
             userData = user.val()
-            #print(userData)
-            #print(hasattr(userData, "height"))
-            #print(getattr(userData, "isAdmin", [0]))
-            if (self.stationID in userData.get('stations', [])): # {name": "Mortimer 'Morty' Smith"}
-                # User owning this station found
-                userID = userData["userID"]
+            if (self.stationID in userData.get('stations', [])):
+                userID = userData.get("userID")
                 break
 
-        # If no users own this station, throw a connection error
         if (userID == ""):
             raise ConnectionError()
 
-        # Pull their data
-        # Return a userData object with their data
         return self.getUserData(userID)
+
+    def getFriendsStations(self):
+
+        pass
 
     # --- Updating Station Data ---
     def updateHumidity(self, humidity):
-        self.updateDatabase(f"stations/{self.stationID}/humidity", humidity)
+        self.updateDatabase(f"stations/{self.stationID}/humidity",
+                            humidity)
 
     def updateWaterFrequency(self, waterFrequency):
-        self.updateDatabase(f"stations/{self.stationID}/waterFrequency", waterFrequency)
+        self.updateDatabase(f"stations/{self.stationID}/waterFrequency",
+                            waterFrequency)
 
-    # Adding Water History
     def addWaterHistory(self, waterData):
-        # Add a water history entry to the database
-        self.database.child(f"stations/{self.stationID}/waterHistory").push({"datetime": waterData.datetime, "amount": waterData.amount})
+        self.database.child(f"stations/{self.stationID}/waterHistory").push(
+                            {"datetime": waterData.datetime,
+                             "amount": waterData.amount})
 
     # --- Station Registering ---
     def isStationRegistered(self):
-        return (not self.database.child(f"stations/{self.stationID}").shallow().get().val() == None)
+        return (not self.database.child(f"stations/{self.stationID}").shallow().get().val() is None)
 
     def registerStation(self, stationData):
-        self.updateDatabase(f"stations/{self.stationID}", { "stationID": self.stationID,
-                                                            "cupSize": stationData.cupSize, 
-                                                            "humidity": 0, 
-                                                            "mute": stationData.mute, 
-                                                            "waterFrequency": 3600, 
-                                                            "displayNotificationsFromFriends": stationData.displayNotificationsFromFriends})
+        self.updateDatabase(f"stations/{self.stationID}",
+                            {"stationID": self.stationID,
+                             "cupSize": stationData.cupSize,
+                             "humidity": 0,
+                             "mute": stationData.mute,
+                             "waterFrequency": 3600,
+                             "displayNotificationsFromFriends": stationData.displayNotificationsFromFriends})
 
     def ensureStationRegistered(self, stationData):
         if (not self.isStationRegistered()):

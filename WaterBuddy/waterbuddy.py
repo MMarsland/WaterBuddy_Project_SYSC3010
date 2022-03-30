@@ -92,10 +92,11 @@ class WaterBuddy:
             try:
                 if (self.online):
                     # Check Database for Messages directed at this senseHat
-                    messageObjs = self.firebaseAPI.getMessages()
-                    for messageObj in messageObjs:
+                    messages = self.firebaseAPI.getMessages()
+                    for message in messages:
                         # Act on the message
-                        self.display.displayMessage(("station" if ("Station" in messageObj["source"]) else "application"), messageObj["message"])
+                        if not message.isFriendNotification() or self.stationData.displayNotificationsFromFriends:
+                            self.display.displayMessage(("station" if ("Station" in message.source) else "application"), message.message)
 
                     dataChanged = False
                     # Check for updates to the database (UserData, StationData) and update local database
@@ -146,6 +147,7 @@ class WaterBuddy:
 
                 if self.fillSystem.waterData:
                     self.addWaterHistory(self.fillSystem.waterData)
+                    self.notifyFriends(self.fillSystem.waterData)
                     self.fillSystem.waterData = None
 
             except ConnectionError:
@@ -211,7 +213,19 @@ class WaterBuddy:
 
         self.localDatabase.deleteWaterHistory()
 
+    def notifyFriends(self, waterData):
+        # TODO: NOTIFY FRIENDS
 
+        # For each friend, send a message to each station
+        for friendID in self.userData.friends:
+            print(f"{friendID}")
+            friendData = self.firebaseAPI.getUserData(friendID)
+            for stationID in friendData.stations:
+                print(f"{stationID}")
+                self.firebaseAPI.sendMessage(dest=stationID, 
+                                             message=f"{self.userData.userID} has just finished a glass of water!", 
+                                             extras={"friendNotification": True})
+                # Notify App?
 
 
 if __name__ == '__main__':
