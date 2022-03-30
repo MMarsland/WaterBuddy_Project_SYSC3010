@@ -19,7 +19,7 @@ def test_flashWord():
     delay = 0.2
     senseDisplay.flashWord("Test Flash!", delay)
     
-    assert (input(f'\nDid you see the text "Test Flash!" flash with a {delay} second delay? (y/n): ') == "y")
+    assert (input(f'\nDid you see the text "Test Flash!" flash? (y/n): ') == "y")
 
 def test_flash():
     senseDisplay = SenseHatDisplay()

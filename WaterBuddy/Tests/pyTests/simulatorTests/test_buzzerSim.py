@@ -13,14 +13,14 @@ def test_init():
 def test_playChimeLocal():
     buzzer = BuzzerSim(SenseHatDisplay())
     buzzer.playChime("local")
-    assert (input('\nDid you see a red flash? (y/n): ') == "y")
+    assert (input('\nDid you see the text "Local Message: "? (y/n): ') == "y")
 
 def test_playChimeStation():
     buzzer = BuzzerSim(SenseHatDisplay())
     buzzer.playChime("station")
-    assert (input('\nDid you see a green flash? (y/n): ') == "y")
+    assert (input('\nDid you see the text "Station Message: "? (y/n): ') == "y")
 
 def test_playChimeApplication():
     buzzer = BuzzerSim(SenseHatDisplay())
     buzzer.playChime("application")
-    assert (input('\nDid you see a blue flash? (y/n): ') == "y")
+    assert (input('\nDid you see the text "App Message: "? (y/n): ') == "y")
