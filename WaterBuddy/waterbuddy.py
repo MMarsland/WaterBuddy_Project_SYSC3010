@@ -37,7 +37,7 @@ class WaterBuddy:
 
         if (simulator):
             self.display = Display(SenseHatDisplay(), BuzzerSim(SenseHatDisplay()))
-            self.fillSystem = FillSystemSim(SenseHatDisplay())
+            self.fillSystem = FillSystemSim(self.display)
         else:
             self.display = Display(SenseHatDisplay(), Buzzer())
             self.fillSystem = FillSystem(self)
@@ -47,7 +47,7 @@ class WaterBuddy:
 
     def main(self):
         print("Welcome to WaterBuddy!")
-        self.display.displayMessage("local", "Welcome to WaterBuddy!")
+        self.display.displayMessage("Welcome to WaterBuddy!", "local")
 
         self.online = True
         try:
@@ -59,7 +59,7 @@ class WaterBuddy:
                 print("Station Already Registered")
         except ConnectionError as e:
             self.online = False
-            self.display.displayMessage("local", "No Internet Connection...")
+            self.display.displayMessage("No Internet Connection...", "local")
 
         # Try to get user and station data from local database
         self.stationData = self.localDatabase.getStationData()
@@ -79,7 +79,7 @@ class WaterBuddy:
         
         except ConnectionError as e:
             print("This station must be registered to a user to run, try registering this station through the application or connecting the station to the internet")
-            self.display.displayMessage("local", "This station must be registered to a user to run, try registering this station through the application or connecting the station to the internet")
+            self.display.displayMessage("This station must be registered to a user to run, try registering this station through the application or connecting the station to the internet", "local")
             time.sleep(10)
             self.main()
 
@@ -95,8 +95,8 @@ class WaterBuddy:
                     messages = self.firebaseAPI.getMessages()
                     for message in messages:
                         # Act on the message
-                        if not message.isFriendNotification() or self.stationData.displayNotificationsFromFriends:
-                            self.display.displayMessage(("station" if ("Station" in message.source) else "application"), message.message)
+                        if not message.isFriendNotification() or self.stationData.displayNotificationsFromFriends and not self.stationData.mute:
+                            self.display.displayMessage(message.message, ("station" if ("Station" in message.source) else "application"))
 
                     dataChanged = False
                     # Check for updates to the database (UserData, StationData) and update local database
@@ -149,6 +149,8 @@ class WaterBuddy:
                     self.addWaterHistory(self.fillSystem.waterData)
                     self.notifyFriends(self.fillSystem.waterData)
                     self.fillSystem.waterData = None
+
+                # TODO: NOTIFY USER IF IT'S TIME TO DRINK ( IF not self.stationData.mute)
 
             except ConnectionError:
                 self.online = False
@@ -204,8 +206,6 @@ class WaterBuddy:
     def uploadWaterHistory(self):
         # Upload all water history rows to firebase and then delete the enteries from the local database (Would be issues (Double uploads) if we upload some and then go offline... Could fix this by going row by row and deleting as we go)
         # We could thread this but then need to be careful of going offline while in a thread
-        #self.lastDisplayMessageThread = threading.Thread(target=displayMessageThread, args=(self, code, message, self.lastDisplayMessageThread))
-        #self.lastDisplayMessageThread.start()
         waterHistory = self.localDatabase.getWaterHistory()
 
         for waterData in waterHistory:

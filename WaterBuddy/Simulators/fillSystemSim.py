@@ -8,8 +8,8 @@ from dataStructures import WaterData
 
 
 class FillSystemSim():
-    def __init__(self, senseHatDisplay):
-        self.senseHatDisplay = senseHatDisplay
+    def __init__(self, display):
+        self.display = display
         self.cupSensor = CupSensorSim()
 
         self.filling = False
@@ -25,12 +25,12 @@ class FillSystemSim():
     def fillSystemThread(self):
         self.filling = True
         
-        self.senseHatDisplay.flash((0,255,0))
+        self.display.displayMessage("Filling!")
         
         time.sleep(5)
         waterData = WaterData(amount=random.randint(460,500))
 
-        self.senseHatDisplay.flash((255,255,0))
+        self.display.displayMessage("Done Fill!")
     
         self.waterData = waterData
         self.filling = False

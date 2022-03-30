@@ -37,4 +37,4 @@ class Message:
     extras: dict = field(default_factory=dict)
 
     def isFriendNotification(self):
-        return self.extras.get("friendsNotification", False) == True
+        return self.extras.get("friendNotification", False) == True
