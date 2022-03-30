@@ -32,14 +32,14 @@ def test_getFromDatabase():
 def test_sendMessage_and_getMessages():
     fb = FirebaseAPI("Station 99")
 
-    fb.sendMessage("Station 99", "Station 99", "Test Message!")
+    fb.sendMessage("Station 99", "Test Message!")
 
     messages = fb.getMessages()
 
     assert len(messages) == 1
-    assert messages[0]["src"] == "Station 99"
-    assert messages[0]["dest"] == "Station 99"
-    assert messages[0]["message"] == "Test Message!"
+    assert messages[0].source == "Station 99"
+    assert messages[0].dest == "Station 99"
+    assert messages[0].message == "Test Message!"
 
 def test_isStationRegistered():
     fb = FirebaseAPI("Station 99")

@@ -28,3 +28,13 @@ class UserData:
 class WaterData:
     datetime: str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     amount: float = 0.0
+
+@dataclass
+class Message:
+    source: str = ""
+    dest: str = ""
+    message: str = ""
+    extras: dict = field(default_factory=dict)
+
+    def isFriendNotification(self):
+        return self.extras.get("friendNotification", False) == True

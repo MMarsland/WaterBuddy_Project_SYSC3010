@@ -1,15 +1,17 @@
 from sense_hat import SenseHat
 from random import randint
 import time
+import threading
 
+
+# For thread saftey, these display methods should only be called through the Display class
 class SenseHatDisplay():
     def __init__(self):
         self.sense = SenseHat()
-        pass
 
     def showMessage(self, message):
         color = self.getRandomColour()
-        speed = 0.05
+        speed = 0.025
         self.sense.show_message(message, text_colour=color, scroll_speed=speed)
 
     def flashWord(self, word, delay):
@@ -24,7 +26,7 @@ class SenseHatDisplay():
         time.sleep(0.5)
         self.sense.clear()
 
-    def getRandomColour(self,):
+    def getRandomColour(self):
          r = randint(50, 255)
          g = randint(50, 255)
          b = randint(50, 255)
