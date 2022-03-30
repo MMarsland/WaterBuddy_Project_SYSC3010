@@ -225,9 +225,13 @@ class WaterBuddy:
             friendData = self.firebaseAPI.getUserData(friendID)
             for stationID in friendData.stations:
                 self.firebaseAPI.sendMessage(dest=stationID, 
-                                             message=f"{self.userData.userID} has just finished a glass of water!", 
+                                             message=f"{self.userData.userID} has just finished a glass of water!",
                                              extras={"friendNotification": True})
-                # TODO: Notify App?
+
+            # Notify App
+            self.firebaseAPI.sendMessage(dest=friendID, 
+                                         message=f"Your friend {self.userData.userID} has just finished a glass of water! Get drinking!",
+                                         extras={"friendNotification": True})
 
 
 if __name__ == '__main__':
