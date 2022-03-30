@@ -29,7 +29,7 @@ class WaterBuddy:
         self.stationID = stationID # "Can we get this from the hardware?" From local database maybe! Randomly generated first time? Unique
         self.waterFrequency = 3600
         self.lastHumidiySendTime = None
-        self.lastFillTime = None
+        self.lastFillOrNotificationTime = time.time()
 
         self.firebaseAPI = FirebaseAPI(self.stationID)
         self.localDatabase = LocalDatabase()
@@ -149,8 +149,13 @@ class WaterBuddy:
                     self.addWaterHistory(self.fillSystem.waterData)
                     self.notifyFriends(self.fillSystem.waterData)
                     self.fillSystem.waterData = None
+                    self.lastFillOrNotificationTime = time.time()
 
-                # TODO: NOTIFY USER IF IT'S TIME TO DRINK ( IF not self.stationData.mute)
+                # Notify the user if it's time to drink water!
+                if (time.time() - self.lastFillOrNotificationTime > self.waterFrequency):
+                    self.lastFillOrNotificationTime = time.time()
+                    if not self.stationData.mute:
+                        self.display.displayMessage("It's time for a glass of water!", "local")
 
             except ConnectionError:
                 self.online = False
@@ -158,7 +163,7 @@ class WaterBuddy:
             time.sleep(delay)
 
     def updateWaterFrequency(self):
-        # Recalucaltes the water frequency based on new StationData and/or new UserData
+        # TODO: Recalucaltes the water frequency based on new StationData and/or new UserData
 
         # Basic Hydration Amounts
         #https://www.healthline.com/health/how-much-water-should-I-drink#recommendations
@@ -189,6 +194,7 @@ class WaterBuddy:
         # Water frequency = f(cupsPerHour)
 
         self.waterFrequency = 3600 # Defaults at 1 per hour
+        self.waterFrequency = 120 # Test as 2 minutes
         
     def addWaterHistory(self, waterData):
         if (self.online):
@@ -214,18 +220,14 @@ class WaterBuddy:
         self.localDatabase.deleteWaterHistory()
 
     def notifyFriends(self, waterData):
-        # TODO: NOTIFY FRIENDS
-
         # For each friend, send a message to each station
         for friendID in self.userData.friends:
-            print(f"{friendID}")
             friendData = self.firebaseAPI.getUserData(friendID)
             for stationID in friendData.stations:
-                print(f"{stationID}")
                 self.firebaseAPI.sendMessage(dest=stationID, 
                                              message=f"{self.userData.userID} has just finished a glass of water!", 
                                              extras={"friendNotification": True})
-                # Notify App?
+                # TODO: Notify App?
 
 
 if __name__ == '__main__':
