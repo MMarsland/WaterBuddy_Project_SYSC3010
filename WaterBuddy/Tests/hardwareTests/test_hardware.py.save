@@ -1,0 +1,22 @@
+import time, sys
+import RPi.GPIO as GPIO
+sys.path.append('../')
+from fillSystem import CupSensor
+from fillSystem import Relay
+from fillSystem import FlowSensor
+from buzzer import Buzzer
+
+# Instantiate hardware objects with GPIO pin numbers
+cupSensor = CupSensor(17, 27)
+relay = Relay(26)
+flowSensor = FlowSensor(22)
+buzzer = Buzzer(12)
+
+while 1:
+    try:
+        if(cupSensor.triggered()):
+            https://github.com/MMarsland/SYSC3010_Projec
+    except KeyboardInterrupt:
+            print("Exiting")
+            GPIO.cleanup()
+            sys.exit()

@@ -3,42 +3,48 @@ import time
 import threading
 from dataStructures import WaterData
 
+
 class FillSystem():
     def __init__(self, waterBuddy):
         self.waterBuddy = waterBuddy
-        self.cupSensor = CupSensor()
-        self.relay = Relay()
-        self.flowSensor = FlowSensor()
+        self.cupSensor = CupSensor(17, 27)
+        self.relay = Relay(26)
+        self.flowSensor = FlowSensor(22)
 
-        self.cupFillMargin = 50 # How many mL to fill short of the cupSize
-
+        self.cupFillMargin = 50  # How many mL to fill short of the cupSize
+        self.flowSensorInterval = 0.5  # Flow sensor poll interval in seconds
 
         self.waterData = None
         self.filling = False
 
-
+    # Poll the cup sensor, if cup is detected,
+    # start the fill system thread
     def poll(self):
         if (self.cupSensor.triggered()):
             self.filling = True
-
-            filLThread = threading.Thread(target=self.fillSystemThread, daemon=True)
+            fillThread = threading.Thread(target=self.fillSystemThread,
+                                          daemon=True)
             fillThread.start()
 
-
+    # Thread function
     def fillSystemThread(self):
-        # Run the whole fill system process
-
-        # Turn on Relay
+        self.relay.on()  # Turn on water pump
 
         # Loop polling Flow Sensor (Recording amount flowed)
-        amount = 420
+        amount = 0
+        while amount < (self.waterBuddy.stationData.cupSize
+                        - self.cupFillMargin):
+            amount = amount + (self.flowSensor.getFlowRate(
+                               self.flowSensorInterval)
+                               * self.flowSensorInterval)
 
-        # Turn off relay when amount flowed is nearing cupsize
-        # if (amount > self.waterBuddy.stationData.cupSize - self.cupFillMargin)
-        
-        # When the whole process is done return a new waterdata with the amount filled
+        self.relay.off()  # Turn off water pump
+
+        # When the whole process is done return
+        # a new waterdata with the amount filled
         self.waterData = WaterData(amount=amount)
         self.filling = False
+
 
 class CupSensor():
     def __init__(self, trigger, echo):
@@ -48,8 +54,9 @@ class CupSensor():
         # Setup GPIO pins
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.TRIGGER_PIN, GPIO.OUT)
-        GPIO.setup(self.ECHO_PIN, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
+        GPIO.setup(self.ECHO_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
+    # Measure distance to nearest object
     def getDistance(self):
         # Send a 10us pulse to the TRIGGER
         GPIO.output(self.TRIGGER_PIN, 1)
@@ -59,19 +66,25 @@ class CupSensor():
         startTime = time.time()
         stopTime = time.time()
 
-        while GPIO.input(self.ECHO_PIN) == 0: # Wait for ECHO to be driven high by the sensor
+        # Wait for ECHO to be driven high by the sensor
+        while GPIO.input(self.ECHO_PIN) == 0:
             startTime = time.time()
 
-        while GPIO.input(self.ECHO_PIN) == 1: # Wait for ECHO to be driven low by the sensor
+        # Wait for ECHO to be driven low by the sensor
+        while GPIO.input(self.ECHO_PIN) == 1:
             stopTime = time.time()
 
         elapsed = stopTime - startTime
-        distance = (elapsed * 34300) / 2 # Distance = time * speed of sound (in cm/s)
+
+        # Distance = time * speed of sound (in cm/s)
+        distance = (elapsed * 34300) / 2
         print("Distance: {:.3f} cm\n".format(distance))
         return distance
 
+    # Return true if sensor distance is < 3cm
     def triggered(self):
         return self.getDistance() < 3
+
 
 class Relay():
     def __init__(self, pin):
@@ -81,11 +94,14 @@ class Relay():
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.RELAY_PIN, GPIO.OUT)
 
+    # Turn the relay on
     def on(self):
         GPIO.output(self.RELAY_PIN, 1)
 
+    # Turn the relay off
     def off(self):
         GPIO.output(self.RELAY_PIN, 0)
+
 
 class FlowSensor():
 
@@ -98,10 +114,16 @@ class FlowSensor():
 
         # Setup GPIO pin
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.SENSOR_PIN, GPIO.IN, pull_up_down = GPIO.PUD_UP) # Sensor is active LOW, use internal pull-up resistor
-        GPIO.add_event_detect(self.SENSOR_PIN, GPIO.FALLING, callback=self.detectEdge) # Setup interrupts
 
-    # This function is meant to be used as the ISR for the sensor pin (i.e. it fires everytime a falling edge is detected)
+        # Sensor is active LOW, use internal pull-up resistor
+        GPIO.setup(self.SENSOR_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+        # Setup interrupts
+        GPIO.add_event_detect(self.SENSOR_PIN, GPIO.FALLING,
+                              callback=self.detectEdge)
+
+    # This function is meant to be used as the ISR for the sensor pin
+    # (i.e. it fires everytime a falling edge is detected)
     def detectEdge(self, channel):
         global _edgeCount
         if _enable == 1:
@@ -115,6 +137,7 @@ class FlowSensor():
         time.sleep(interval)
         _enable = 0
 
-        flowRate = ((_edgeCount / interval) / 11) # Frequency to flow rate conversion from sensor datasheet
-        print("Flow rate: {:.3f} L/min\n".format(flowRate))
+        # Frequency to flow rate conversion from sensor datasheet
+        flowRate = ((_edgeCount / interval) / 11)*(1000/60)
+        print("Flow rate: {:.3f} mL/sec\n".format(flowRate))
         return flowRate
