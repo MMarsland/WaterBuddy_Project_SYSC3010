@@ -48,6 +48,7 @@ class WaterBuddy:
     def main(self):
         print("Welcome to WaterBuddy!")
         self.display.displayMessage("Welcome to WaterBuddy!", "local")
+        self.display.startAnimation("smile", durationFrames=6)
 
         self.online = True
         try:
@@ -140,7 +141,10 @@ class WaterBuddy:
                 # Poll the ultrasonic sensor (Fill System (Start fill system thread + block another thread from starting))
                 # This will run the whole fill system process which results in updates the water history (see "WaterBuddy.addWaterHistory") (Should also potentially notify friends)
                 if not self.fillSystem.filling:
-                    self.fillSystem.poll()
+                    if (self.fillSystem.poll()):
+                        # TODO: Fix Threading issues
+                        print("Fill System Triggered")
+                        self.display.startAnimation("filling")
                 # Maybe check if fillSystem thread is complete? Need to pass data from the thread? Can a thread make a callback on this thread?
 
                 if self.fillSystem.waterData:
@@ -148,14 +152,17 @@ class WaterBuddy:
                     self.notifyFriends(self.fillSystem.waterData)
                     self.fillSystem.waterData = None
                     self.lastFillOrNotificationTime = time.time()
+                    self.display.stopAnimation()
+                    self.display.startAnimation("smile", durationFrames=10)
 
                 # Notify the user if it's time to drink water!
                 if (time.time() - self.lastFillOrNotificationTime > self.waterFrequency):
                     self.lastFillOrNotificationTime = time.time()
                     if not self.stationData.mute:
                         self.display.displayMessage("It's time for a glass of water!", "local")
+                        self.display.startAnimation("smile", durationFrames=10)
 
-                # TODO: Animations
+                # TODO: Animations (Pausing behaviour?)
 
             except ConnectionError:
                 self.online = False
@@ -163,8 +170,6 @@ class WaterBuddy:
             time.sleep(delay)
 
     def updateWaterFrequency(self):
-        # TODO: Recalucaltes the water frequency based on new StationData and/or new UserData
-
         # Basic Hydration Amounts
         #https://www.healthline.com/health/how-much-water-should-I-drink#recommendations
         #https://www.nap.edu/read/10925/chapter/6#144

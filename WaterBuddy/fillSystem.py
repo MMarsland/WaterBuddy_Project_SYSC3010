@@ -3,7 +3,6 @@ import time
 import threading
 from dataStructures import WaterData
 
-
 class FillSystem():
     def __init__(self, waterBuddy):
         self.waterBuddy = waterBuddy
@@ -22,9 +21,12 @@ class FillSystem():
     def poll(self):
         if (self.cupSensor.triggered()):
             self.filling = True
+            # Display Filling Animation 
             fillThread = threading.Thread(target=self.fillSystemThread,
                                           daemon=True)
             fillThread.start()
+            return True
+        return False
 
     # Thread function
     def fillSystemThread(self):

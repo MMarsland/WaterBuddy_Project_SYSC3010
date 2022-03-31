@@ -18,14 +18,16 @@ class FillSystemSim():
     def poll(self):
         # Ultrasonic sensor triggered, run fill system!
         if self.cupSensor.triggered():
-            # Start a new thread for the fill system, simulate fill system
+            self.display.displayMessage("Filling!")
+            # Start a new thread for the fill system, simulate fill system\
+            print("Starting Fill Thread")
             x = threading.Thread(target=self.fillSystemThread, daemon=True)
             x.start()
+            return True
+        return False
 
     def fillSystemThread(self):
         self.filling = True
-        
-        self.display.displayMessage("Filling!")
         
         time.sleep(5)
         waterData = WaterData(amount=random.randint(460,500))
@@ -43,7 +45,7 @@ class CupSensorSim():
     
     def getDistance(self):
         distance = 10.0000
-
+        
         for event in self.sense.stick.get_events():
             if event.direction == "middle":
                 distance = 2.0000

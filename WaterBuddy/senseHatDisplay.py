@@ -26,8 +26,14 @@ class SenseHatDisplay():
         time.sleep(0.5)
         self.sense.clear()
 
+    def setPixels(self, pixels):
+        self.sense.set_pixels(pixels)
+
     def getRandomColour(self):
-         r = randint(50, 255)
-         g = randint(50, 255)
-         b = randint(50, 255)
+         r = randint(100, 255)
+         g = randint(100, 255)
+         b = randint(100, 255)
          return (r, g, b)
+
+    def clear(self):
+        self.sense.clear()
