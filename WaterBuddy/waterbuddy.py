@@ -65,9 +65,6 @@ class WaterBuddy:
         self.stationData = self.localDatabase.getStationData()
         self.userData = self.localDatabase.getUserData()
 
-        # Calculate inital water frequency
-        self.updateWaterFrequency()
-
         try:
             # Get userdata from owner (From Either Firebase or LocalDatabase)
             if (self.userData.userID == "John Doe"):
@@ -83,7 +80,8 @@ class WaterBuddy:
             time.sleep(10)
             self.main()
 
-        
+        # Calculate inital water frequency
+        self.updateWaterFrequency()
 
         self.loop(1)
         
@@ -157,6 +155,8 @@ class WaterBuddy:
                     if not self.stationData.mute:
                         self.display.displayMessage("It's time for a glass of water!", "local")
 
+                # TODO: Animations
+
             except ConnectionError:
                 self.online = False
 
@@ -189,12 +189,23 @@ class WaterBuddy:
 
         # Hours at desk 8 or number of waking hours 16
         # Amount of water Per day = f(weight, thirst)
-        # Number of cups = f(cupSize)
+        # Number of cups = f(cupSize, Amount of water Per day)
         # cupsPerHour = f(numberOfCups, hours)
         # Water frequency = f(cupsPerHour)
 
-        self.waterFrequency = 3600 # Defaults at 1 per hour
-        self.waterFrequency = 120 # Test as 2 minutes
+        workDayHours = 8
+        waterFrequency = 3600
+        try:
+            mLPerDay = (self.userData.weight*2.2) * 2/3 * 29.5735/1 + 355 * (self.userData.thirst-1) # kg * oz/kg * ml/oz = ml
+            numOfCups = mLPerDay / self.stationData.cupSize # ml/day / ml/cup = cups/day
+            cupsPerHour = numOfCups / workDayHours # cups/day / hours/day = cups/hour
+            waterFrequency = 3600 / cupsPerHour # 1 / cups/hour * sec/hour = secs/cup
+        except Exception as e:
+            print(e)
+            pass
+
+        self.waterFrequency = waterFrequency
+        # self.waterFrequency = 120 # Test as 2 minutes
         
     def addWaterHistory(self, waterData):
         if (self.online):

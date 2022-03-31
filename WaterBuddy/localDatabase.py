@@ -11,7 +11,7 @@ class LocalDatabase():
 
         self.db.execute('''
                 CREATE TABLE IF NOT EXISTS userData
-                (userID TINYTEXT, height NUMERIC, weight NUMERIC, thirst TINYTEXT)
+                (userID TINYTEXT, height NUMERIC, weight NUMERIC, thirst NUMERIC)
                 ''')
                 
         self.db.execute('''

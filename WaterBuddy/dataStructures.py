@@ -19,7 +19,7 @@ class UserData:
     isAdmin: bool = False
     height: float = 0.0
     weight: float = 0.0
-    thirst: str = "less"
+    thirst: int = 1
 
     def updateFrom(self, data):
         pass
