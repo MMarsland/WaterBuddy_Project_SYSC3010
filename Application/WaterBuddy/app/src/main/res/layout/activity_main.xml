@@ -14,10 +14,14 @@
         android:layout_height="wrap_content"
         android:id="@+id/horizontalguideline"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.2"/>
+        app:layout_constraintGuide_percent="0.25"/>
 
     <TextView
         android:id="@+id/identifier"
+        android:textSize="25sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:gravity="center"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_width="wrap_content"
@@ -62,7 +66,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -71,8 +75,6 @@
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-
             <TableRow>
                 <Space
                     android:layout_width="0dp"
@@ -93,12 +95,14 @@
             <TableRow>
                 <TextView
                     android:layout_width="0dp"
-                    android:layout_weight="0.5"
+                    android:layout_weight="0.6"
                     android:layout_height="wrap_content"
+                    android:textSize="20sp"
                     android:text="Current Humidity:"/>
                 <TextView
                     android:id="@+id/humidity"
-                    android:layout_weight="0.5"
+                    android:layout_weight="0.4"
+                    android:textSize="20sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
@@ -106,12 +110,14 @@
             <TableRow>
                 <TextView
                     android:layout_width="0dp"
-                    android:layout_weight="0.5"
+                    android:layout_weight="0.6"
                     android:layout_height="wrap_content"
+                    android:textSize="20sp"
                     android:text="Daily Water intake (ml):"/>
                 <TextView
                     android:id="@+id/dailyWater"
-                    android:layout_weight="0.5"
+                    android:textSize="20sp"
+                    android:layout_weight="0.4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
@@ -119,12 +125,14 @@
             <TableRow>
                 <TextView
                     android:layout_width="0dp"
-                    android:layout_weight="0.5"
+                    android:layout_weight="0.6"
                     android:layout_height="wrap_content"
-                    android:text="Weekly Water intake (ml):"/>
+                    android:textSize="20sp"
+                    android:text="Monthly Water intake (ml):"/>
                 <TextView
-                    android:id="@+id/weeklyWater"
-                    android:layout_weight="0.5"
+                    android:id="@+id/monthlyWater"
+                    android:textSize="20sp"
+                    android:layout_weight="0.4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
@@ -136,19 +144,62 @@
             <TableRow>
                 <TextView
                     android:layout_width="0dp"
-                    android:layout_weight="0.5"
+                    android:layout_weight="0.6"
                     android:layout_height="wrap_content"
+                    android:textSize="20sp"
                     android:text="Cup Size (ml):"/>
                 <EditText
                     android:inputType="numberDecimal"
                     android:id="@+id/cupSize"
-                    android:layout_weight="0.5"
+                    android:layout_weight="0.2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
                 <Button
+                    android:layout_weight="0.2"
                     android:onClick="update_cupSize"
                     android:text="confirm"/>
             </TableRow>
+
+            <TableRow>
+                <Spinner
+                    android:id="@+id/month_selector"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.4"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    />
+                <Space
+                    android:layout_height="40dp"
+                    android:layout_weight="0.6"
+                    />
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                    android:gravity="center"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.1"
+                    android:layout_height="match_parent"
+                    android:text="W\na\nt\ne\nr\n \nI\nn\nt\na\nk\ne\n (ml)"
+                />
+                <com.github.mikephil.charting.charts.LineChart
+                    android:layout_weight="0.9"
+                    android:id="@+id/stationChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="240dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/white"
+                    android:elevation="10dp"
+                    />
+            </TableRow>
+
+
+            <Space
+                android:layout_height="40dp"
+                />
+
         </TableLayout>
     </ScrollView>
 

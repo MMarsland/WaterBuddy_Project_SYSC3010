@@ -1,27 +1,34 @@
 package com.application.waterbuddy;
 
 import static android.content.ContentValues.TAG;
-
 import android.util.Log;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 
 /**
  * Java Class for interfacing database commands with main application
+ * Provides different functions to read and update Firebase Database data
+ * @author Caleb Turcotte
  */
 public class DatabaseInterface {
+    /**
+     * Lint Tool Used: Android Lint
+     * Output: No problems in DatabaseInterface
+     */
 
     public DatabaseReference userRef, stationRef, messageRef;
     public ArrayList<String> users;
     public ArrayList<User> userList;
     public User username;
 
+    /**
+     * Constructor for DatabaseInterface
+     * Creates initial database references and empty user lists
+     */
     public DatabaseInterface () {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         userRef = database.getReference("users");
@@ -41,20 +48,17 @@ public class DatabaseInterface {
         if (username == null) {
             return "Error";
         }
-
         if (username.friends == null) {
             username.friends = new ArrayList<>();
         }
         if (username.friends.contains(friend_id)) {
             return "Friend already on list";
         }
-
         if(users.contains(friend_id)) {
             username.friends.add(friend_id);
             userRef.child(username.userID).setValue(username);
             return "Friend successfully added";
         }
-
         return "Id does not exist";
     }
 
@@ -92,8 +96,9 @@ public class DatabaseInterface {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    if(snapshot.getKey().equals(userid)) {
-                        username = snapshot.getValue(User.class);
+                    if(snapshot.getKey() != null &&
+                            snapshot.getKey().equals(userid)) {
+                            username = snapshot.getValue(User.class);
                     }
                 }
             }
@@ -119,8 +124,8 @@ public class DatabaseInterface {
         }
         if (users.contains(user)) {
             // check password
-            for (User tempuser : userList) {
-                if (tempuser.passwordHASH.equals(password) && tempuser.userID.equals(user)) {
+            for (User tempUser : userList) {
+                if (tempUser.passwordHASH.equals(password) && tempUser.userID.equals(user)) {
                     return true;
                 }
             }

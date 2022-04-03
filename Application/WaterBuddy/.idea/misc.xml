@@ -11,11 +11,12 @@
         <entry key="app/src/main/res/drawable/ic_button_sound_off_1.xml" value="0.19" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.19" />
         <entry key="app/src/main/res/layout/activity_chart.xml" value="0.17291666666666666" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="app/src/main/res/layout/login.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/message.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/register.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/user_options.xml" value="0.25" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1815" />
       </map>
     </option>
   </component>

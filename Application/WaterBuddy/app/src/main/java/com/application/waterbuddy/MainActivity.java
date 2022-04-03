@@ -5,8 +5,15 @@ package com.application.waterbuddy;
 import static android.content.ContentValues.TAG;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -20,12 +27,23 @@ import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Main Activity for Water Buddy Smart Application
@@ -80,10 +98,43 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Initialize notification channel for API 26+ to fit the latest standard
+     */
+    private void createNotificationChannel() {
+        String CHANNEL_ID = "Notification_Channel";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    /**
+     * Build and push notification
+     * @param notify_text String input to display in the Notification
+     * @return The built Notification
+     */
+    private NotificationCompat.Builder build_notification(String notify_text){
+        String CHANNEL_ID = "Notification_Channel";
+
+        return new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle("New Message!")
+                .setContentText(notify_text)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+    }
+
+    /**
      * Load the main layout
      * @param userid Username for the account
      */
     public void load_layout(String userid) {
+        createNotificationChannel();
         dbInterface.load(userid);
 
         TextView identifier = findViewById(R.id.identifier);
@@ -121,6 +172,94 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         dbInterface.stationRef.addValueEventListener(stationListener);
+
+        ValueEventListener messageListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(reference);
+                int notification_id = 0;
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Message val = snapshot.getValue(Message.class);
+                    if (val != null &&
+                            val.dest != null &&
+                            val.dest.equals(userid)) {
+                        notificationManager.notify(notification_id, build_notification(val.message).build());
+                        notification_id++;
+                        if (snapshot.getKey() != null) {
+                            dbInterface.messageRef.child(snapshot.getKey()).removeValue();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadStation:onCancelled", databaseError.toException());
+            }
+        };
+        dbInterface.messageRef.addValueEventListener(messageListener);
+    }
+
+    /**
+     * Fill MPAndroid Line Chart with all of the WaterHistory Data for selected month
+     * @param year The selected year
+     * @param month The selected month
+     */
+    public void fill_Chart(int year, int month) {
+        LineChart stationChart = findViewById(R.id.stationChart);
+        stationChart.setTouchEnabled(true);
+        stationChart.setPinchZoom(true);
+        stationChart.getAxisRight().setEnabled(false);
+
+        stationChart.getDescription().setEnabled(true);
+        Description description = new Description();
+        Calendar date = new GregorianCalendar(year, month, 1);
+        String month_text = date.getDisplayName(GregorianCalendar.MONTH, GregorianCalendar.LONG, Locale.CANADA);
+        description.setText(month_text);
+        stationChart.setDescription(description);
+
+        LineDataSet set1;
+        ArrayList<Entry> values = new ArrayList<>();
+        Station selected_station = sReference.get(selected_index);
+
+        int daysInMonth = date.getActualMaximum(GregorianCalendar.DAY_OF_MONTH);
+
+        for (int i=1; i < daysInMonth; i++) {
+            values.add(new Entry(i, selected_station.getDailyWater(year, month, i)));
+        }
+
+        if (stationChart.getData() != null &&
+                stationChart.getData().getDataSetCount() > 0) {
+            set1 = (LineDataSet) stationChart.getData().getDataSetByIndex(0);
+            set1.setValues(values);
+            set1.notifyDataSetChanged();
+            stationChart.getData().notifyDataChanged();
+            stationChart.notifyDataSetChanged();
+        } else {
+            // create a dataset and give it a type
+            set1 = new LineDataSet(values, "Water Intake");
+            set1.setDrawIcons(false);
+
+            // black lines and points
+            set1.setColor(Color.BLUE);
+            set1.setCircleColor(Color.BLACK);
+
+            // line thickness and point size
+            set1.setLineWidth(1f);
+            set1.setCircleRadius(3f);
+
+            // draw points as solid circles
+            set1.setDrawCircleHole(false);
+
+            ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+            dataSets.add(set1); // add the data sets
+
+            // create a data object with the data sets
+            LineData data = new LineData(dataSets);
+            // set data
+            stationChart.setData(data);
+        }
     }
 
     /**
@@ -133,9 +272,38 @@ public class MainActivity extends AppCompatActivity {
         TextView humidity = findViewById(R.id.humidity);
         humidity.setText(String.valueOf(selected_station.humidity));
 
+        TextView dailyWater = findViewById(R.id.dailyWater);
+        Calendar date = new GregorianCalendar();
+        dailyWater.setText(String.valueOf(selected_station.getDailyWater(date.get(Calendar.YEAR),
+                date.get(Calendar.MONTH), date.get(Calendar.DATE))));
+
+        TextView monthlyWater = findViewById(R.id.monthlyWater);
+        monthlyWater.setText(String.valueOf(selected_station.getMonthlyWater()));
+
         EditText cupSize = findViewById(R.id.cupSize);
         cupSize.setText(String.valueOf(selected_station.cupSize));
 
+        Spinner selection = findViewById(R.id.month_selector);
+
+        selection.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                fill_Chart(date.get(GregorianCalendar.YEAR),position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
+        });
+
+        List<String> months = Arrays.asList("January", "February", "March", "April", "May",
+                "June", "July", "August", "September", "October", "November", "December");
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, months);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        selection.setAdapter(adapter);
+        selection.setSelection(date.get(GregorianCalendar.MONTH));
 
     }
 
@@ -152,6 +320,7 @@ public class MainActivity extends AppCompatActivity {
         final PopupWindow messageWindow = new PopupWindow(messageView, width, height, true);
         messageWindow.setOutsideTouchable(true);
         messageWindow.setElevation(20);
+        messageWindow.setAnimationStyle(R.style.PopupAnimation);
 
         Spinner user_select = messageView.findViewById(R.id.friend_select);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
@@ -217,14 +386,14 @@ public class MainActivity extends AppCompatActivity {
         EditText station_name = registerView.findViewById(R.id.station_text);
         Button message_button = registerView.findViewById(R.id.register_station);
 
-        TextView errortext = registerView.findViewById(R.id.error_text);
+        TextView errorText = registerView.findViewById(R.id.error_text);
 
         message_button.setOnClickListener(v -> {
             if(dbInterface.register_station(station_name.getText().toString())) {
-                errortext.setText(R.string.register_success);
+                errorText.setText(R.string.register_success);
             }
             else {
-                errortext.setText(R.string.register_fail);
+                errorText.setText(R.string.register_fail);
             }
         });
 
@@ -253,6 +422,7 @@ public class MainActivity extends AppCompatActivity {
         final PopupWindow optionsWindow = new PopupWindow(optionsView, width, height, true);
         optionsWindow.setOutsideTouchable(true);
         optionsWindow.setElevation(20);
+        optionsWindow.setAnimationStyle(R.style.PopupAnimation);
         Button message_button = optionsView.findViewById(R.id.logout);
         Button settings_button = optionsView.findViewById(R.id.settings_button);
         Button friend_add = optionsView.findViewById(R.id.friend_add);
@@ -305,10 +475,10 @@ public class MainActivity extends AppCompatActivity {
 
         String userid = settings.getString("userid", null);
         if (userid == null) {
-            LayoutInflater confirminflater = (LayoutInflater)
+            LayoutInflater confirmInflater = (LayoutInflater)
                     getSystemService(LAYOUT_INFLATER_SERVICE);
-            assert confirminflater != null;
-            View loginView = confirminflater.inflate(R.layout.login, findViewById(R.id.main), false);
+            assert confirmInflater != null;
+            View loginView = confirmInflater.inflate(R.layout.login, findViewById(R.id.main), false);
             int width = ConstraintLayout.LayoutParams.MATCH_PARENT;
             int height = ConstraintLayout.LayoutParams.MATCH_PARENT;
             final PopupWindow loginWindow = new PopupWindow(loginView, width, height, true);
