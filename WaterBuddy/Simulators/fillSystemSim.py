@@ -20,8 +20,8 @@ class FillSystemSim():
         if self.cupSensor.triggered():
             self.display.displayMessage("Filling!")
             # Start a new thread for the fill system, simulate fill system\
-            print("Starting Fill Thread")
-            x = threading.Thread(target=self.fillSystemThread, daemon=True)
+            #print("Starting Fill Thread")
+            x = threading.Thread(target=self.fillSystemThread)
             x.start()
             return True
         return False
@@ -29,12 +29,17 @@ class FillSystemSim():
     def fillSystemThread(self):
         self.filling = True
         
-        time.sleep(5)
-        waterData = WaterData(amount=random.randint(460,500))
+        time.sleep(10)
+        waterData = WaterData(amount=random.randint(410,430))
 
         self.display.displayMessage("Done Fill!")
     
         self.waterData = waterData
+
+        while (self.cupSensor.getDistance() < 5):
+            pass
+
+        time.sleep(5)
         self.filling = False
         
 

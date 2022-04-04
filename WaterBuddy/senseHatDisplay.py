@@ -6,8 +6,9 @@ import threading
 
 # For thread saftey, these display methods should only be called through the Display class
 class SenseHatDisplay():
-    def __init__(self):
+    def __init__(self, rotation=0):
         self.sense = SenseHat()
+        self.sense.set_rotation(rotation)
 
     def showMessage(self, message):
         color = self.getRandomColour()

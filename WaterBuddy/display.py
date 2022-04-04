@@ -27,7 +27,6 @@ class Display():
             #time.sleep(2)
             self.senseHat.showMessage(message)
 
-        
         # Made a thread for this process
         self.displayThread = threading.Thread(target=displayMessageThread, args=(self, self.displayThread, message, buzzerCode))
         self.displayThread.start()
@@ -55,7 +54,7 @@ class Display():
                 self.displayThread.join()
 
             self.animation = self.animations.getAnimation(animationName, durationFrames, interruptable)
-            self.animation.start()
+            self.animation.show()
 
         self.animationThread = threading.Thread(target=animationThread, args=(self, self.animationThread, animationName, durationFrames, interruptable))
         self.animationThread.start()

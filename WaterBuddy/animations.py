@@ -119,6 +119,50 @@ smile2 = [
     B, B, B, B, B, B, B, B
 ]
 
+blink1 = [
+    B, B, B, B, B, B, B, B,
+    B, B, E, B, B, E, B, B,
+    B, B, E, B, B, E, B, B,
+    B, B, E, B, B, E, B, B,
+    B, B, B, B, B, B, B, B,
+    B, E, B, B, B, B, E, B,
+    B, B, E, E, E, E, B, B,
+    B, B, B, B, B, B, B, B
+]
+
+blink2 = [
+    B, B, B, B, B, B, B, B,
+    B, B, B, B, B, B, B, B,
+    B, B, B, B, B, B, B, B,
+    B, B, B, B, B, B, B, B,
+    B, B, B, B, B, B, B, B,
+    B, E, B, B, B, B, E, B,
+    B, B, E, E, E, E, B, B,
+    B, B, B, B, B, B, B, B
+]
+
+wink1 = [
+    B, B, B, B, B, B, B, B,
+    B, B, E, B, B, E, B, B,
+    B, B, E, B, B, E, B, B,
+    B, B, E, B, B, E, B, B,
+    B, B, B, B, B, B, B, B,
+    B, E, B, B, B, B, E, B,
+    B, B, E, E, E, E, B, B,
+    B, B, B, B, B, B, B, B
+]
+
+wink2 = [
+    B, B, B, B, B, B, B, B,
+    B, B, B, B, B, E, B, B,
+    B, E, E, E, B, E, B, B,
+    B, B, B, B, B, E, B, B,
+    B, B, B, B, B, B, B, B,
+    B, E, B, B, B, B, E, B,
+    B, B, E, E, E, E, B, B,
+    B, B, B, B, B, B, B, B
+]
+
 blank = [
     B, B, B, B, B, B, B, B,
     B, B, B, B, B, B, B, B,
@@ -139,6 +183,10 @@ class Animations():
             return Animation(self.senseHat, [cup_empty, cup_filling, cup_filling2, cup_full], durationFrames, interruptable)
         elif (animationName == "smile"):
             return Animation(self.senseHat, [smile1, smile2], durationFrames, interruptable)
+        elif (animationName == "blink"):
+            return Animation(self.senseHat, [blink1, blink2], durationFrames, interruptable)
+        elif (animationName == "wink"):
+            return Animation(self.senseHat, [wink1, wink2], durationFrames, interruptable)
 
 class Animation():
     def __init__(self, senseHat, frames, durationFrames, interruptable):
@@ -149,7 +197,7 @@ class Animation():
         self.pause = False
         self.stop = False
     
-    def start(self):
+    def show(self):
         frameCount = 0
         while not self.stop and frameCount < self.durationFrames:
             if (not self.pause):

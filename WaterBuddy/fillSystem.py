@@ -22,8 +22,7 @@ class FillSystem():
         if (self.cupSensor.triggered()):
             self.filling = True
             # Display Filling Animation 
-            fillThread = threading.Thread(target=self.fillSystemThread,
-                                          daemon=True)
+            fillThread = threading.Thread(target=self.fillSystemThread)
             fillThread.start()
             return True
         return False
