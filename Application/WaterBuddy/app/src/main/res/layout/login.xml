@@ -80,14 +80,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Log in"/>
+                android:text="Log in"
+                android:theme="@style/Button_Style"/>
 
             <Button
                 android:id="@+id/create_account"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="New account"/>
+                android:text="New account"
+                android:theme="@style/Button_Style"/>
 
         </TableLayout>
 

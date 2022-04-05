@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="PopupAnimation" >
-    <item name="android:windowEnterAnimation">@anim/popup_show</item>
-    <item name="android:windowExitAnimation">@anim/popup_hide</item>
-    <item name="android:windowFullscreen">true</item>
-</style></resources>
+        <item name="android:windowEnterAnimation">@anim/popup_show</item>
+        <item name="android:windowExitAnimation">@anim/popup_hide</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="Button_Style" parent="Widget.AppCompat.Button">
+        <item name="colorButtonNormal">@color/teal_200</item>
+        <item name="colorControlHighlight">@color/teal_700</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+</resources>

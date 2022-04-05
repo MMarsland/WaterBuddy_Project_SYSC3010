@@ -7,7 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:id="@+id/main">
+    android:id="@+id/main"
+    android:background="@drawable/grey">
 
     <androidx.constraintlayout.widget.Guideline
         android:layout_width="wrap_content"
@@ -16,37 +17,54 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.25"/>
 
-    <TextView
-        android:id="@+id/identifier"
-        android:textSize="25sp"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
-        android:gravity="center"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        <LinearLayout
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_popup_background">
+
+            <TextView
+                android:id="@+id/identifier"
+                android:textSize="25sp"
+                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
 
-    <Spinner
-        android:id="@+id/selector"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@id/horizontalguideline"
         app:layout_constraintLeft_toLeftOf="parent"
-        />
-
+        android:orientation="horizontal"
+        android:background="@color/dark_faded">
+        <Spinner
+            android:id="@+id/selector"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/horizontalguideline"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:background="@drawable/ic_picker_background"
+            />
+    </LinearLayout>
 
     <Button
         android:id="@+id/user_opt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="User Options"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
         android:onClick="load_options"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@drawable/ic_button_options"/>
 
     <Button
+        android:theme="@style/Button_Style"
         android:onClick="register_station_view"
         android:id="@+id/register"
         android:layout_width="wrap_content"
@@ -61,7 +79,8 @@
         android:layout_height="wrap_content"
         android:text="Send Message"
         app:layout_constraintTop_toBottomOf="@id/register"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        android:theme="@style/Button_Style"/>
 
 
     <ScrollView
@@ -70,29 +89,41 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/horizontalguideline" >
+        app:layout_constraintTop_toBottomOf="@id/horizontalguideline"
+        android:background="@drawable/water2">
 
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <TableRow>
+            <TableRow
+                android:background="@color/grey">
                 <Space
                     android:layout_width="0dp"
-                    android:layout_weight="0.6"
-                    android:layout_height="wrap_content" />
-                <Button
                     android:layout_weight="0.4"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="0.4"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:gravity="center"
+                    android:text="Mute Station:"/>
+                <Button
+                    android:id="@+id/mute_button"
+                    android:onClick="mute_notification"
+                    android:background="@drawable/ic_button_sound"
+                    android:layout_weight="0.2"
                     android:gravity="center"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="Mute Notifications"/>
+                    android:layout_height="60dp"/>
             </TableRow>
 
             <Space
                 android:layout_height="40dp"
                 />
 
-            <TableRow>
+            <TableRow
+                android:background="@color/grey">
                 <TextView
                     android:layout_width="0dp"
                     android:layout_weight="0.6"
@@ -107,7 +138,8 @@
                     android:layout_height="wrap_content" />
             </TableRow>
 
-            <TableRow>
+            <TableRow
+                android:background="@color/grey">
                 <TextView
                     android:layout_width="0dp"
                     android:layout_weight="0.6"
@@ -122,7 +154,8 @@
                     android:layout_height="wrap_content" />
             </TableRow>
 
-            <TableRow>
+            <TableRow
+                android:background="@color/grey">
                 <TextView
                     android:layout_width="0dp"
                     android:layout_weight="0.6"
@@ -137,11 +170,28 @@
                     android:layout_height="wrap_content" />
             </TableRow>
 
+            <TableRow
+                android:background="@color/grey">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="0.6"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:text="Water Frequency (seconds/cup):"/>
+                <TextView
+                    android:id="@+id/waterFrequency"
+                    android:textSize="20sp"
+                    android:layout_weight="0.4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+
             <Space
                 android:layout_height="40dp"
             />
 
-            <TableRow>
+            <TableRow
+                android:background="@color/grey">
                 <TextView
                     android:layout_width="0dp"
                     android:layout_weight="0.6"
@@ -157,20 +207,27 @@
                 <Button
                     android:layout_weight="0.2"
                     android:onClick="update_cupSize"
-                    android:text="confirm"/>
+                    android:text="confirm"
+                    android:theme="@style/Button_Style"/>
             </TableRow>
+
+            <Space
+                android:layout_height="40dp"
+                android:layout_weight="0.6"
+                />
 
             <TableRow>
                 <Spinner
                     android:id="@+id/month_selector"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.4"
+                    android:layout_weight="0.3"
                     app:layout_constraintLeft_toLeftOf="parent"
+                    android:background="@drawable/ic_picker_background"
                     />
                 <Space
                     android:layout_height="40dp"
-                    android:layout_weight="0.6"
+                    android:layout_weight="0.7"
                     />
             </TableRow>
 
@@ -180,6 +237,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="0.1"
                     android:layout_height="match_parent"
+                    android:background="@color/grey"
                     android:text="W\na\nt\ne\nr\n \nI\nn\nt\na\nk\ne\n (ml)"
                 />
                 <com.github.mikephil.charting.charts.LineChart

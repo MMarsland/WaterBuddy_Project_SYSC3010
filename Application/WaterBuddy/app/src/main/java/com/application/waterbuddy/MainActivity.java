@@ -37,6 +37,8 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -159,8 +161,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(reference,
-                        android.R.layout.simple_spinner_item, station_vals);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        android.R.layout.simple_spinner_dropdown_item, station_vals);
                 selection.setAdapter(adapter);
                 selection.setSelection(selected_index);
             }
@@ -260,6 +261,7 @@ public class MainActivity extends AppCompatActivity {
             // set data
             stationChart.setData(data);
         }
+        stationChart.invalidate();
     }
 
     /**
@@ -279,11 +281,22 @@ public class MainActivity extends AppCompatActivity {
 
         TextView monthlyWater = findViewById(R.id.monthlyWater);
         monthlyWater.setText(String.valueOf(selected_station.getMonthlyWater()));
+        TextView waterFrequency = findViewById(R.id.waterFrequency);
+        DecimalFormat df = new DecimalFormat("#.00");
+        waterFrequency.setText(df.format(selected_station.waterFrequency));
 
         EditText cupSize = findViewById(R.id.cupSize);
         cupSize.setText(String.valueOf(selected_station.cupSize));
 
         Spinner selection = findViewById(R.id.month_selector);
+
+        Button mute_button = findViewById(R.id.mute_button);
+        if(selected_station.mute) {
+            mute_button.setBackgroundResource(R.drawable.ic_button_sound_off);
+        }
+        else {
+            mute_button.setBackgroundResource(R.drawable.ic_button_sound);
+        }
 
         selection.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -300,17 +313,40 @@ public class MainActivity extends AppCompatActivity {
                 "June", "July", "August", "September", "October", "November", "December");
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, months);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                android.R.layout.simple_spinner_dropdown_item, months);
         selection.setAdapter(adapter);
         selection.setSelection(date.get(GregorianCalendar.MONTH));
+    }
 
+    /**
+     * Toggle Mute option for the selected Water Buddy Station
+     * @param view The instance View
+     */
+    public void mute_notification(View view) {
+        if (sReference.size() == 0) {
+            return;
+        }
+        Station selected_station = sReference.get(selected_index);
+        boolean mute_value = !selected_station.mute;
+        Button mute_button = findViewById(R.id.mute_button);
+
+        if(mute_value) {
+            mute_button.setBackgroundResource(R.drawable.ic_button_sound_off);
+        }
+        else {
+            mute_button.setBackgroundResource(R.drawable.ic_button_sound);
+        }
+
+        dbInterface.stationRef.child(selected_station.stationID).child("mute").setValue(mute_value);
     }
 
     /**
      * Send a custom message to desired station
      */
     public void custom_message(View view) {
+        if (dbInterface.username == null) {
+            return;
+        }
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(LAYOUT_INFLATER_SERVICE);
         assert inflater != null;
@@ -374,15 +410,19 @@ public class MainActivity extends AppCompatActivity {
      * @param view Main view for the button click
      */
     public void register_station_view(View view) {
+        if (dbInterface.username == null) {
+            return;
+        }
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(LAYOUT_INFLATER_SERVICE);
         assert inflater != null;
         View registerView = inflater.inflate(R.layout.register, findViewById(R.id.main), false);
         int width = ConstraintLayout.LayoutParams.MATCH_PARENT;
         int height = ConstraintLayout.LayoutParams.MATCH_PARENT;
-        final PopupWindow optionsWindow = new PopupWindow(registerView, width, height, true);
-        optionsWindow.setOutsideTouchable(true);
-        optionsWindow.setElevation(20);
+        final PopupWindow registerWindow = new PopupWindow(registerView, width, height, true);
+        registerWindow.setOutsideTouchable(true);
+        registerWindow.setElevation(20);
+        registerWindow.setAnimationStyle(R.style.PopupAnimation);
         EditText station_name = registerView.findViewById(R.id.station_text);
         Button message_button = registerView.findViewById(R.id.register_station);
 
@@ -397,13 +437,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        optionsWindow.showAtLocation(findViewById(R.id.main), Gravity.CENTER, 0, 0);
+        registerWindow.showAtLocation(findViewById(R.id.main), Gravity.CENTER, 0, 0);
     }
 
     /**
      * Update cupSize for selected child
      */
     public void update_cupSize(View v) {
+        if (sReference.size() == 0) {
+            return;
+        }
         EditText cupSize = findViewById(R.id.cupSize);
         dbInterface.stationRef.child(sReference.get(selected_index).stationID).child("cupSize").setValue(Double.parseDouble(cupSize.getText().toString()));
     }
@@ -413,6 +456,9 @@ public class MainActivity extends AppCompatActivity {
      * @param view The main view for the button click
      */
     public void load_options(View view) {
+        if (dbInterface.username == null) {
+            return;
+        }
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(LAYOUT_INFLATER_SERVICE);
         assert inflater != null;
@@ -436,8 +482,7 @@ public class MainActivity extends AppCompatActivity {
 
         Collections.addAll(thirst_list, "Hydrophobic", "Average", "Thirsty", "Parched");
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, thirst_list);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                android.R.layout.simple_spinner_dropdown_item, thirst_list);
         thirst.setAdapter(adapter);
         thirst.setSelection(dbInterface.username.thirst);
 
@@ -450,10 +495,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         settings_button.setOnClickListener(v -> {
-            dbInterface.username.height = Double.parseDouble(user_height.getText().toString());
-            dbInterface.username.weight = Double.parseDouble(user_weight.getText().toString());
-            dbInterface.username.thirst = thirst.getSelectedItemPosition();
-            dbInterface.userRef.child(dbInterface.username.userID).setValue(dbInterface.username);
+            if (!user_height.getText().toString().equals("") && !user_weight.getText().toString().equals("")) {
+                dbInterface.username.height = Double.parseDouble(user_height.getText().toString());
+                dbInterface.username.weight = Double.parseDouble(user_weight.getText().toString());
+                dbInterface.username.thirst = thirst.getSelectedItemPosition();
+
+                dbInterface.userRef.child(dbInterface.username.userID).setValue(dbInterface.username);
+            }
         });
 
         friend_add.setOnClickListener(v -> {

@@ -4,14 +4,23 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.19" />
+        <entry key="app/src/main/res/drawable/basic_background.xml" value="0.2" />
+        <entry key="app/src/main/res/drawable/ic_background_popup.xml" value="0.2" />
+        <entry key="app/src/main/res/drawable/ic_button_options.xml" value="0.2" />
         <entry key="app/src/main/res/drawable/ic_button_sound.xml" value="0.19" />
         <entry key="app/src/main/res/drawable/ic_button_sound_1.xml" value="0.19" />
         <entry key="app/src/main/res/drawable/ic_button_sound_2.xml" value="0.19" />
         <entry key="app/src/main/res/drawable/ic_button_sound_off.xml" value="0.19" />
         <entry key="app/src/main/res/drawable/ic_button_sound_off_1.xml" value="0.19" />
+        <entry key="app/src/main/res/drawable/ic_button_sound_off_2.xml" value="0.2" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.19" />
+        <entry key="app/src/main/res/drawable/ic_options_button_1.xml" value="0.2" />
+        <entry key="app/src/main/res/drawable/ic_options_button_2.xml" value="0.2" />
+        <entry key="app/src/main/res/drawable/ic_picker_background.xml" value="0.2" />
+        <entry key="app/src/main/res/drawable/ic_popup_background.xml" value="0.2" />
+        <entry key="app/src/main/res/drawable/ic_popup_background_text.xml" value="0.2" />
         <entry key="app/src/main/res/layout/activity_chart.xml" value="0.17291666666666666" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="app/src/main/res/layout/login.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/message.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/register.xml" value="0.35625" />

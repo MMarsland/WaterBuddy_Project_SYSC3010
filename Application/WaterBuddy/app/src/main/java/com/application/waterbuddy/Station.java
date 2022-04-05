@@ -17,9 +17,9 @@ public class Station {
     public double weeklyWater;
     public double humidity;
     public double cupSize;
-    public int waterFrequency;
+    public double waterFrequency;
     public String stationID;
-    public String notification;
+    public boolean displayNotificationsFromFriends;
     public boolean mute;
     public HashMap<String,WaterHistory> waterHistory;
 
@@ -31,6 +31,8 @@ public class Station {
         this.cupSize = cupSize;
         this.stationID = id;
         humidity = 25;
+        mute = false;
+        displayNotificationsFromFriends = true;
 
     }
 
@@ -70,6 +72,9 @@ public class Station {
      * @return Monthly Water Consumed
      */
     public int getMonthlyWater(){
+        if (waterHistory == null){
+            return 0;
+        }
         int amount = 0;
         Date today = new Date();
         for (WaterHistory history : waterHistory.values()){
