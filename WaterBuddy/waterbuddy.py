@@ -1,4 +1,5 @@
-#Imports 
+#Imports
+import RPi.GPIO as GPIO 
 import sys
 import time
 import random
@@ -40,7 +41,7 @@ class WaterBuddy:
             self.display = Display(SenseHatDisplay(rotation=180), BuzzerSim(SenseHatDisplay()))
             self.fillSystem = FillSystemSim(self.display, self)
         else:
-            self.display = Display(SenseHatDisplay(), Buzzer())
+            self.display = Display(SenseHatDisplay(), Buzzer(12))
             self.fillSystem = FillSystem(self)
 
         self.userData = UserData()
@@ -261,8 +262,9 @@ class WaterBuddy:
 
 if __name__ == '__main__':
     try:
-        water_buddy = WaterBuddy("Station 70", simulator=True)
+        water_buddy = WaterBuddy("Station 69", simulator=False)
         water_buddy.main()
     except KeyboardInterrupt:
         print("Interrupeted")
+        GPIO.cleanup()
     print("Exiting")

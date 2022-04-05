@@ -11,7 +11,7 @@ class FillSystem():
         self.flowSensor = FlowSensor(22)
 
         self.cupFillMargin = 50  # How many mL to fill short of the cupSize
-        self.flowSensorInterval = 0.5  # Flow sensor poll interval in seconds
+        self.flowSensorInterval = 0.1  # Flow sensor poll interval in seconds
 
         self.waterData = None
         self.filling = False
@@ -33,8 +33,8 @@ class FillSystem():
 
         # Loop polling Flow Sensor (Recording amount flowed)
         amount = 0
-        while amount < (self.waterBuddy.stationData.cupSize
-                        - self.cupFillMargin):
+        while amount < ((self.waterBuddy.stationData.cupSize
+                        - self.cupFillMargin) * 0.75):
             amount = amount + (self.flowSensor.getFlowRate(
                                self.flowSensorInterval)
                                * self.flowSensorInterval)
@@ -44,6 +44,14 @@ class FillSystem():
         # When the whole process is done return
         # a new waterdata with the amount filled
         self.waterData = WaterData(amount=amount)
+
+        distance = 0
+        while distance < 10:
+            distance = self.cupSensor.getDistance()
+            time.sleep(1)
+
+        time.sleep(10)
+
         self.filling = False
 
 
@@ -84,7 +92,7 @@ class CupSensor():
 
     # Return true if sensor distance is < 3cm
     def triggered(self):
-        return self.getDistance() < 3
+        return self.getDistance() < 4
 
 
 class Relay():
