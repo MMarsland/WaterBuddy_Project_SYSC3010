@@ -38,7 +38,7 @@ class WaterBuddy:
 
         if (simulator):
             self.display = Display(SenseHatDisplay(rotation=180), BuzzerSim(SenseHatDisplay()))
-            self.fillSystem = FillSystemSim(self.display)
+            self.fillSystem = FillSystemSim(self.display, self)
         else:
             self.display = Display(SenseHatDisplay(), Buzzer())
             self.fillSystem = FillSystem(self)
@@ -138,13 +138,10 @@ class WaterBuddy:
                     self.online = False
 
                 # Poll the ultrasonic sensor (Fill System (Start fill system thread + block another thread from starting))
-                # This will run the whole fill system process which results in updates the water history (see "WaterBuddy.addWaterHistory") (Should also potentially notify friends)
                 if not self.fillSystem.filling:
                     if (self.fillSystem.poll()):
                         # TODO: Fix Threading issues
-                        print("Fill System Triggered")
                         self.display.startAnimation("filling")
-                # Maybe check if fillSystem thread is complete? Need to pass data from the thread? Can a thread make a callback on this thread?
 
                 if self.fillSystem.waterData:
                     self.addWaterHistory(self.fillSystem.waterData)
@@ -166,7 +163,7 @@ class WaterBuddy:
                                                  message=f"It's time for another glass of water!")
 
                 # TODO: Animations (Pausing behaviour?)
-                if (loopTime - self.lastAnimationTime > 30):
+                if (loopTime - self.lastAnimationTime > 30 and not self.stationData.mute):
                     self.lastAnimationTime = loopTime
                     animationNum = random.randint(0,1)
                     if (animationNum == 0):

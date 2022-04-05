@@ -1,5 +1,4 @@
 from sense_hat import SenseHat
-import random
 import threading
 import time
 import sys
@@ -8,7 +7,8 @@ from dataStructures import WaterData
 
 
 class FillSystemSim():
-    def __init__(self, display):
+    def __init__(self, display, waterBuddy):
+        self.waterBuddy = waterBuddy
         self.display = display
         self.cupSensor = CupSensorSim()
 
@@ -18,23 +18,22 @@ class FillSystemSim():
     def poll(self):
         # Ultrasonic sensor triggered, run fill system!
         if self.cupSensor.triggered():
-            self.display.displayMessage("Filling!")
+            self.display.displayMessage("Congratualtions! Go refill your cup!")
             # Start a new thread for the fill system, simulate fill system\
             #print("Starting Fill Thread")
-            x = threading.Thread(target=self.fillSystemThread)
+            x = threading.Thread(target=self.fillSystemThread, args=(self.waterBuddy.stationData.cupSize,))
             x.start()
             return True
         return False
 
-    def fillSystemThread(self):
+    def fillSystemThread(self, amount):
         self.filling = True
         
         time.sleep(10)
-        waterData = WaterData(amount=random.randint(410,430))
 
-        self.display.displayMessage("Done Fill!")
-    
-        self.waterData = waterData
+        self.waterData = WaterData(amount=amount)
+
+        self.display.displayMessage("Keep on drinking!")
 
         while (self.cupSensor.getDistance() < 5):
             pass

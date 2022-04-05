@@ -45,8 +45,6 @@ class Display():
         self.displayThread.start()
 
     def startAnimation(self, animationName, durationFrames=math.inf, interruptable=False):
-        self.stopAnimation()
-
         def animationThread(self, lastAnimationThread, animationName, durationFrames, interruptable):
             if not lastAnimationThread is None:
                 lastAnimationThread.join()
