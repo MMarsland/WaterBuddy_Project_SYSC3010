@@ -29,6 +29,7 @@ class WaterBuddy:
     def __init__(self, stationID, simulator=False):
         self.stationID = stationID # "Can we get this from the hardware?" From local database maybe! Randomly generated first time? Unique
         self.waterFrequency = 3600
+        self.humidity = 0
         self.lastHumidiySendTime = None
         self.lastFillOrNotificationTime = time.time()
         self.lastAnimationTime = time.time()
@@ -123,10 +124,12 @@ class WaterBuddy:
                     if (not self.lastHumidiySendTime or (loopTime - self.lastHumidiySendTime > 5)):
                         self.lastHumidiySendTime = loopTime
                         # Get Humidity
-                        humidity = self.sensors.getHumidity()
+                        self.humidity = self.sensors.getHumidity()
                         # Send Humidity
-                        self.firebaseAPI.updateHumidity(humidity)
+                        self.firebaseAPI.updateHumidity(self.humidity)
                         #print(f"Humidity of {humidity} uploaded at {datetime.now().strftime('%H:%M:%S')}")
+                        self.updateWaterFrequency()
+                        self.firebaseAPI.updateWaterFrequency(self.waterFrequency)
 
                 # Check if we have come online
                 try:
@@ -208,6 +211,8 @@ class WaterBuddy:
         # cupsPerHour = f(numberOfCups, hours)
         # Water frequency = f(cupsPerHour)
 
+        # Very this based on humidity (0=dry , 100=wet)
+
         workDayHours = 8
         waterFrequency = 3600
         try:
@@ -215,6 +220,7 @@ class WaterBuddy:
             numOfCups = mLPerDay / self.stationData.cupSize # ml/day / ml/cup = cups/day
             cupsPerHour = numOfCups / workDayHours # cups/day / hours/day = cups/hour
             waterFrequency = 3600 / cupsPerHour # 1 / cups/hour * sec/hour = secs/cup
+            waterFrequency = waterFrequency * ((110 - self.humidity/10)/100)
         except Exception as e:
             print(e)
             pass
@@ -268,3 +274,6 @@ if __name__ == '__main__':
         print("Interrupeted")
         GPIO.cleanup()
     print("Exiting")
+
+
+# TODO: Base 
