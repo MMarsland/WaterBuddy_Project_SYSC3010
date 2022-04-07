@@ -1,6 +1,6 @@
 # SYSC 3010 - Term Project - The WaterBuddy
-Group: L3_G7
-TA: Roger Selzer
+Group: L3_G7  
+TA: Roger Selzer  
 Group Members
   - Michael Marsland
   - Nick Milani
