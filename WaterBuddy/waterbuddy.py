@@ -88,7 +88,7 @@ class WaterBuddy:
                     messages = self.firebaseAPI.getMessages()
                     for message in messages:
                         # Act on the message
-                        if not message.isFriendNotification() or self.stationData.displayNotificationsFromFriends and not self.stationData.mute:
+                        if not self.stationData.mute and (not message.isFriendNotification() or self.stationData.displayNotificationsFromFriends):
                             self.display.displayMessage(message.message, ("station" if ("Station" in message.source) else "application"))
 
                     self.dataChanged = False
@@ -138,12 +138,14 @@ class WaterBuddy:
                 if not self.fillSystem.filling:
                     if (self.fillSystem.poll()):
                         self.display.startAnimation("filling")
+                else:
+                    self.lastAnimationTime = loopTime
+                    self.lastFillOrNotificationTime = loopTime
 
                 if self.fillSystem.waterData:
                     self.addWaterHistory(self.fillSystem.waterData)
                     self.notifyFriends(self.fillSystem.waterData)
                     self.fillSystem.waterData = None
-                    self.lastFillOrNotificationTime = loopTime
                     self.display.stopAnimation()
                     self.display.startAnimation("smile", durationFrames=6)
 
@@ -158,7 +160,7 @@ class WaterBuddy:
                     self.firebaseAPI.sendMessage(dest=self.userData.userID, 
                                                  message=f"It's time for another glass of water!")
 
-                if (loopTime - self.lastAnimationTime > 30 and not self.stationData.mute):
+                if (not self.stationData.mute and (loopTime - self.lastAnimationTime > 30)):
                     self.lastAnimationTime = loopTime
                     animationNum = random.randint(0,1)
                     if (animationNum == 0):
