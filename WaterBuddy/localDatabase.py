@@ -1,7 +1,6 @@
 import sqlite3
-from dataStructures import StationData
-from dataStructures import UserData
-from dataStructures import WaterData
+from dataStructures import StationData, UserData, WaterData
+
 
 class LocalDatabase():
     def __init__(self):
@@ -41,14 +40,6 @@ class LocalDatabase():
             self.connection.commit()
 
 
-        
-        # Other Maybe Helpful commands from LAB 2
-        # cursor.execute("insert into weatherdata values (?, ?, ?, ?, ?, ?);", (city, datetime.now(), current["temp"], current["humidity"], current["pressure"], wind["speed"]))
-        # df = pd.read_sql_query("SELECT * FROM sensordata;", dbconnect)[['temperature', 'humidity', 'pressure']]
-        # df['pressure'] = df['pressure'].apply(lambda x: x/1000*30)
-        # df.rename(columns={'temperature': 'Temperature', 'humidity': 'Humidity ', 'pressure': 'Pressure/1000*30'}, inplace=True)
-
-
     def updateUserData(self, userData):
         # Update the columns of userData with new userData
         self.db.execute("UPDATE userData SET userID = ?, height = ?, weight = ?, thirst = ?", (userData.userID, userData.height, userData.weight, userData.thirst))
@@ -85,7 +76,6 @@ class LocalDatabase():
         # Return the Station Data Object
         return stationData
         
-
     def getUserData(self):
         # Retreve the userData from the database
         self.db.execute("SELECT * from userData;")
@@ -94,10 +84,3 @@ class LocalDatabase():
         userData = UserData(userID=data[0], height=data[1], weight=data[2], thirst=data[3])
         # Return the Station Data Object
         return userData
-
-if __name__ == "__main__":
-    #ld = LocalDatabase()
-    #ld.updateUserData(UserData(userID="Larry Bird", weight=50))
-    #print(ld.getUserData())
-    pass
-

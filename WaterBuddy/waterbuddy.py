@@ -6,7 +6,6 @@ import random
 
 # Local Classes
 from dataStructures import StationData, UserData
-
 from display import Display
 from firebaseAPI import FirebaseAPI
 from localDatabase import LocalDatabase
@@ -24,10 +23,9 @@ from buzzerSim import BuzzerSim
 from fillSystemSim import FillSystemSim
 
 
-# Process for connection to new customer's internet?
 class WaterBuddy:
     def __init__(self, stationID, simulator=False):
-        self.stationID = stationID # "Can we get this from the hardware?" From local database maybe! Randomly generated first time? Unique
+        self.stationID = stationID
         self.waterFrequency = 3600
         self.humidity = 0
         self.lastHumidiySendTime = None
@@ -51,18 +49,13 @@ class WaterBuddy:
         self.dataChanged = True
 
     def main(self):
-        print("Welcome to WaterBuddy!")
         self.display.displayMessage("Welcome to WaterBuddy!", "local")
         self.display.startAnimation("smile", durationFrames=6)
 
         self.online = True
         try:
-            print("Ensuring the station is registered")
             if (not self.firebaseAPI.isStationRegistered()):
-                print("Registering Station")
                 self.firebaseAPI.registerStation(self.stationData)
-            else:
-                print("Station Already Registered")
         except ConnectionError as e:
             self.online = False
             self.display.displayMessage("No Internet Connection...", "local")
@@ -78,7 +71,7 @@ class WaterBuddy:
             # Get userdata from owner (From Either Firebase or LocalDatabase)
             if (self.userData.userID == "John Doe"):
                 # We don't have any user data stored in localDatabase
-                print("This station must be registered to a user to run. Try registering this station through the application or connecting the station to the internet")
+                #print("This station must be registered to a user to run. Try registering this station through the application or connecting the station to the internet")
                 self.display.displayMessage("This station must be registered to a user to run. Try registering this station through the application or connecting the station to the internet", "local")
                 time.sleep(60)
                 self.main()
@@ -144,7 +137,6 @@ class WaterBuddy:
                 # Poll the ultrasonic sensor (Fill System (Start fill system thread + block another thread from starting))
                 if not self.fillSystem.filling:
                     if (self.fillSystem.poll()):
-                        # TODO: Fix Threading issues
                         self.display.startAnimation("filling")
 
                 if self.fillSystem.waterData:
@@ -166,7 +158,6 @@ class WaterBuddy:
                     self.firebaseAPI.sendMessage(dest=self.userData.userID, 
                                                  message=f"It's time for another glass of water!")
 
-                # TODO: Animations (Pausing behaviour?)
                 if (loopTime - self.lastAnimationTime > 30 and not self.stationData.mute):
                     self.lastAnimationTime = loopTime
                     animationNum = random.randint(0,1)
@@ -174,8 +165,6 @@ class WaterBuddy:
                         self.display.startAnimation("blink", durationFrames=7)
                     elif (animationNum == 1):
                         self.display.startAnimation("wink", durationFrames=7)
-
-
 
             except ConnectionError:
                 self.online = False
@@ -226,12 +215,11 @@ class WaterBuddy:
             pass
 
         self.waterFrequency = waterFrequency
-        # self.waterFrequency = 120 # Test as 2 minutes
         
     def addWaterHistory(self, waterData):
         if (self.online):
             try:
-                # Uplaod to Firebase
+                # Upload to Firebase
                 self.firebaseAPI.addWaterHistory(waterData)
                 # Notify Friends
                 return
@@ -274,6 +262,3 @@ if __name__ == '__main__':
         print("Interrupeted")
         GPIO.cleanup()
     print("Exiting")
-
-
-# TODO: Base 

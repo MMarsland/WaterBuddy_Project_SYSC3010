@@ -1,5 +1,6 @@
 from sense_hat import SenseHat
 
+
 class SenseHatSensors():
     def __init__(self):
         self.sense = SenseHat()

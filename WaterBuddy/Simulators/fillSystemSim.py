@@ -19,8 +19,7 @@ class FillSystemSim():
         # Ultrasonic sensor triggered, run fill system!
         if self.cupSensor.triggered():
             self.display.displayMessage("Congratualtions! Go refill your cup!")
-            # Start a new thread for the fill system, simulate fill system\
-            #print("Starting Fill Thread")
+            # Start a new thread for the fill system, simulate fill system
             x = threading.Thread(target=self.fillSystemThread, args=(self.waterBuddy.stationData.cupSize,))
             x.start()
             return True
@@ -42,7 +41,6 @@ class FillSystemSim():
         self.filling = False
         
 
-
 class CupSensorSim():
     def __init__(self):
         self.sense = SenseHat()
@@ -53,7 +51,6 @@ class CupSensorSim():
         for event in self.sense.stick.get_events():
             if event.direction == "middle":
                 distance = 2.0000
-        #print("Distance: {:.3f} cm\n".format(distance))
         return distance
 
     def triggered(self):

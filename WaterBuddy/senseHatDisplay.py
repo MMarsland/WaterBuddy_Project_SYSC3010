@@ -3,7 +3,6 @@ from random import randint
 import time
 import threading
 
-
 # For thread saftey, these display methods should only be called through the Display class
 class SenseHatDisplay():
     def __init__(self, rotation=0):

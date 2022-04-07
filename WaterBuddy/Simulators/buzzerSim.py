@@ -3,7 +3,11 @@ class BuzzerSim():
         self.senseHatDisplay = senseHatDisplay
     
     def playChime(self, code):
+        # Don't simulate any buzzer funcationality
+        # on "WaterBuddy Minus"
         return
+
+
         if code == "local" or code == 0:
             # Locally Spawnned Notification
             self.senseHatDisplay.showMessage("Local Mesage: ")

@@ -24,7 +24,6 @@ class Display():
                 lastDisplayThread.join()
 
             self.buzzer.playChime(buzzerCode)
-            #time.sleep(2)
             self.senseHat.showMessage(message)
 
         # Made a thread for this process
