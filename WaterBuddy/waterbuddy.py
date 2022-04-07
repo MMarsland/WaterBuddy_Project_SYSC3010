@@ -173,8 +173,8 @@ class WaterBuddy:
 
     def updateWaterFrequency(self):
         # Basic Hydration Amounts
-        #https://www.healthline.com/health/how-much-water-should-I-drink#recommendations
-        #https://www.nap.edu/read/10925/chapter/6#144
+        # https://www.healthline.com/health/how-much-water-should-I-drink#recommendations
+        # https://www.nap.edu/read/10925/chapter/6#144
         # children 4–8 years old	5 cups, or 40 oz. (1.18L)
         # children 9–13 years old	7–8 cups, or 56–64 oz. (1.66-1.89)
         # children 14–18 years old	8–11 cups, or 64–88 oz. (1.89-2.6)
@@ -209,7 +209,7 @@ class WaterBuddy:
             numOfCups = mLPerDay / self.stationData.cupSize # ml/day / ml/cup = cups/day
             cupsPerHour = numOfCups / workDayHours # cups/day / hours/day = cups/hour
             waterFrequency = 3600 / cupsPerHour # 1 / cups/hour * sec/hour = secs/cup
-            waterFrequency = waterFrequency * ((110 - self.humidity/10)/100)
+            waterFrequency = waterFrequency * ((100 + self.humidity/10)/100) # Time between cups increases as humidity increases
         except Exception as e:
             print(e)
             pass
@@ -256,7 +256,7 @@ class WaterBuddy:
 
 if __name__ == '__main__':
     try:
-        water_buddy = WaterBuddy("Station 69", simulator=False)
+        water_buddy = WaterBuddy("Station 70", simulator=True)
         water_buddy.main()
     except KeyboardInterrupt:
         print("Interrupeted")
