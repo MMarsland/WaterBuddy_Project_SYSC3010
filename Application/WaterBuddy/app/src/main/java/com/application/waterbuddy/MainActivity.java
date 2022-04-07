@@ -286,7 +286,9 @@ public class MainActivity extends AppCompatActivity {
         waterFrequency.setText(df.format(selected_station.waterFrequency));
 
         EditText cupSize = findViewById(R.id.cupSize);
-        cupSize.setText(String.valueOf(selected_station.cupSize));
+        if (!cupSize.hasFocus()) {
+            cupSize.setText(String.valueOf(selected_station.cupSize));
+        }
 
         Spinner selection = findViewById(R.id.month_selector);
 
@@ -360,21 +362,28 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayList<String> user_list = new ArrayList<>();
         user_list.add(dbInterface.username.userID);
-        user_list.addAll(dbInterface.username.friends);
+        if (dbInterface.username.friends != null) {
+            user_list.addAll(dbInterface.username.friends);
+        }
 
         Spinner user_select = messageView.findViewById(R.id.friend_select);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, user_list);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         user_select.setAdapter(adapter);
-        user_select.setSelection(dbInterface.users.indexOf(dbInterface.username.userID));
+        user_select.setSelection(user_list.indexOf(dbInterface.username.userID));
 
         Spinner station_select = messageView.findViewById(R.id.station_select);
 
         user_select.setOnItemSelectedListener( new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                set_message_stations(dbInterface.userList.get(user_select.getSelectedItemPosition()), station_select);
+                for (User user : dbInterface.userList) {
+                    if (user.userID.equals(user_list.get(user_select.getSelectedItemPosition()))){
+                        set_message_stations(user, station_select);
+                        break;
+                    }
+                }
             }
 
             @Override
@@ -452,7 +461,11 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         EditText cupSize = findViewById(R.id.cupSize);
-        dbInterface.stationRef.child(sReference.get(selected_index).stationID).child("cupSize").setValue(Double.parseDouble(cupSize.getText().toString()));
+        cupSize.clearFocus();
+        if (!cupSize.getText().toString().equals("")){
+            dbInterface.stationRef.child(sReference.get(selected_index).stationID).child("cupSize")
+                    .setValue(Double.parseDouble(cupSize.getText().toString()));
+        }
     }
 
     /**

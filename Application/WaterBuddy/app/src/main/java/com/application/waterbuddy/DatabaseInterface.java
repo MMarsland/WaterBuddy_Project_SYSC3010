@@ -21,7 +21,7 @@ public class DatabaseInterface {
      */
 
     public DatabaseReference userRef, stationRef, messageRef;
-    public ArrayList<String> users;
+    public ArrayList<String> users, stationList;
     public ArrayList<User> userList;
     public User username;
 
@@ -37,6 +37,7 @@ public class DatabaseInterface {
 
         users = new ArrayList<>();
         userList = new ArrayList<>();
+        stationList = new ArrayList<>();
     }
 
     /**
@@ -91,6 +92,10 @@ public class DatabaseInterface {
         userRef.child(user).removeValue();
     }
 
+    /**
+     * Load all database list data
+     * @param userid User id for loading values
+     */
     public void load(String userid) {
         ValueEventListener userListener = new ValueEventListener() {
             @Override
@@ -110,6 +115,22 @@ public class DatabaseInterface {
             }
         };
         userRef.addValueEventListener(userListener);
+
+        ValueEventListener stationListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    stationList.add(snapshot.getKey());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadStation:onCancelled", databaseError.toException());
+            }
+        };
+        stationRef.addValueEventListener(stationListener);
     }
 
     /**
@@ -141,7 +162,7 @@ public class DatabaseInterface {
         if (username.stations == null) {
             username.stations = new ArrayList<>();
         }
-        if (!username.stations.contains(station_name)) {
+        if (!username.stations.contains(station_name) && stationList.contains(station_name)) {
             username.stations.add(station_name);
             userRef.child(username.userID).setValue(username);
             return true;
