@@ -358,9 +358,13 @@ public class MainActivity extends AppCompatActivity {
         messageWindow.setElevation(20);
         messageWindow.setAnimationStyle(R.style.PopupAnimation);
 
+        ArrayList<String> user_list = new ArrayList<>();
+        user_list.add(dbInterface.username.userID);
+        user_list.addAll(dbInterface.username.friends);
+
         Spinner user_select = messageView.findViewById(R.id.friend_select);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, dbInterface.users);
+                android.R.layout.simple_spinner_item, user_list);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         user_select.setAdapter(adapter);
         user_select.setSelection(dbInterface.users.indexOf(dbInterface.username.userID));

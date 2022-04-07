@@ -28,8 +28,6 @@ public class User {
         dailyWater = 0;
         weeklyWater = 0;
         isAdmin = false;
-        friends = new ArrayList<>();
-        stations = new ArrayList<>();
         thirst = 1;
         weight = 62;
         height = 177;
