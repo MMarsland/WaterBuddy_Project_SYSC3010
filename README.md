@@ -15,23 +15,23 @@ The purpose of this project was to create a smart desk-mounted watering station
 """Copy the text from the proposal, or design draft?)"""
 
 ## Repository Structure
-### [Smartphone Application] (https://github.com/MMarsland/SYSC3010_Project_L3_G7/tree/main/PythonAPIApplication/WaterBuddy)
+### [Smartphone Application](Application/WaterBuddy)
   - This folder contains...
-### [Main Application Code] (Application/WaterBuddy/app/src/main/java/com/application/waterbuddy) folder
+### [Main Application Code](Application/WaterBuddy/app/src/main/java/com/application/waterbuddy)
   - ...
-### [Application Layout] (Application\WaterBuddy\app\src\main\res\layout) folder
+### [Application Layout](Application\WaterBuddy\app\src\main\res\layout)
   - ...
-### [Applicaation Tests] (Application\WaterBuddy\app\src\test\java\com\application\waterbuddy) folder
+### [Applicaation Tests](Application\WaterBuddy\app\src\test\java\com\application\waterbuddy)
   - ...
 <br>
 
-### [WaterBuddy Station] (WaterBuddy/) folder
+### [WaterBuddy Station](WaterBuddy)
   - This folder contains...  
-### [Simulators] (WaterBuddy/Simulators/) folder
+### [Simulators](WaterBuddy/Simulators/)
   - animations.py contains the code that allows animations to be shown on the senseHat display...
-### [Tests] (WaterBuddy/Tests) folder
+### [Tests](WaterBuddy/Tests)
   - animations.py contains the code that allows animations to be shown on the senseHat display...
-### [Weekly Updates] (WeeklyUpdates) folder
+### [Weekly Updates](WeeklyUpdates)
   - This folder contains...
 
 ## Instalation Instructions
