@@ -7,11 +7,7 @@ TA: Roger Selzer
   - Caleb Turcotte - ...
 
 ## The WaterBuddy
-The Original Design Idea for the WaterBuddy
-![alt text](Images/water_buddy_design.png)
-
-The Completed WaterBuddy Station
-![alt text](Images/water_buddy.png)
+![alt text](Images/water_buddy.png)  
 
 
 ## Project Summary
@@ -82,9 +78,9 @@ finish your glass of water to allow the system to track your progress.
 ## REQUIREMENTS (Remove this once done...)
 Some required elements for your top-level Readme.md file:
 
-Everything from one of your project report title pages (Group number, your names (no student ID here please), project title, project image, TA name, course code)
-A summary of what the project is about (~200 words)
-A description of your repo. What is the directory structure and what is (generally) in each top-level directory (test code, GUI, code for RPi1 that drives the car, etc)
-Installation instructions (how could someone get your project up and running if they bought all the hardware?)
-How to run your system (start this code on RPi1, then launch this code on the AWS server, then initialize...)
-How someone will know that their installation is working correctly ("you should see...", or "running these tests should all pass", or...)
+  - Everything from one of your project report title pages (Group number, your names (no student ID here please), project title, project image, TA name, course code)
+  - A summary of what the project is about (~200 words)
+  - A description of your repo. What is the directory structure and what is (generally) in each top-level directory (test code, GUI, code for RPi1 that drives the car, etc)
+  - Installation instructions (how could someone get your project up and running if they bought all the hardware?)
+  - How to run your system (start this code on RPi1, then launch this code on the AWS server, then initialize...)
+  - How someone will know that their installation is working correctly ("you should see...", or "running these tests should all pass", or...)
