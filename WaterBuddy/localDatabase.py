@@ -1,3 +1,13 @@
+# -----------------------------------------------------------
+# The LocalDatabase class acts as a gateway between the program and the
+# local database, ensuring that data stored in the local database is
+# correctly parsed into the program's dataStructures and stored correctly
+# in the database from the dataStructures.
+#
+# Written by Michael Marsland, April 2022
+# -----------------------------------------------------------
+
+
 import sqlite3
 from dataStructures import StationData, UserData, WaterData
 

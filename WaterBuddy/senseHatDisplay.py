@@ -1,9 +1,18 @@
+# -----------------------------------------------------------
+# The SenseHatDispaly class acts as a module for displaying on the 
+# senseHat matrix. The methods in this file should only be called from
+# the Display class within the thread structure to ensure that calls
+# to the senseHat module do not overlap with eachother.
+#
+# Written by Michael Marsland, April 2022
+# -----------------------------------------------------------
+
 from sense_hat import SenseHat
 from random import randint
 import time
 import threading
 
-# For thread saftey, these display methods should only be called through the Display class
+# For thread safety, these display methods should only be called through the Display class
 class SenseHatDisplay():
     def __init__(self, rotation=0):
         self.sense = SenseHat()

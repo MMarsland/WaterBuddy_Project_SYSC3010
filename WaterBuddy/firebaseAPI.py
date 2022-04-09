@@ -1,3 +1,12 @@
+# -----------------------------------------------------------
+# The FirebaseAPI class acts as a gateway between the program and the
+# Firebase database, ensuring that data from the firebase database is
+# correctly parsed into the program's dataStructures and parsed from the
+# program's dataStrcutres to the firebase database.
+#
+# Written by Michael Marsland, April 2022
+# -----------------------------------------------------------
+
 import pyrebase
 from dataStructures import StationData, UserData, Message
 

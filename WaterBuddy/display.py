@@ -1,3 +1,17 @@
+# -----------------------------------------------------------
+# The Display class controls everything that is displayed on the SenseHat 
+# display matrix as well making accompanying calls to the buzzer. This 
+# involves managing threads to ensure messages are played sequentially
+# without overlapping eachother without locking up the main thread.
+#
+# The Display class manages the display of Messages, flashes (Which aren't 
+# actually used in the final product as is), and animations. Ensuring that
+# when these methods are called to display a new thread is spawned and that
+# thread waits for its turn to dispaly before displaying and terminating.
+#
+# Written by Michael Marsland, April 2022
+# -----------------------------------------------------------
+
 import sys
 import time
 import threading
@@ -62,7 +76,7 @@ class Display():
 
     def resumeAnimation(self):
         if not self.animation is None:
-            self.animation.pasue = False
+            self.animation.pause = False
 
     def stopAnimation(self):
         if not self.animation is None:

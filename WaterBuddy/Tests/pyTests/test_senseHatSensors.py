@@ -1,3 +1,10 @@
+# -----------------------------------------------------------
+# pyTest unit tests for the SenseHatSensors class
+#
+# Written by Michael Marsland, April 2022
+# -----------------------------------------------------------
+
+
 import sys
 sys.path.append('../../')
 sys.path.append('../../Simulators')

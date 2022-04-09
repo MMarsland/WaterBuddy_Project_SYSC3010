@@ -1,3 +1,16 @@
+# -----------------------------------------------------------
+# The FillSystemSim class duck type implements the same functionality
+# as the FillSystem class in fillSystem.py allowing the other waterbuddy
+# code to use either the real fill system or this simulator interchangeably.
+#
+# Unlike the real fill system this simulated class doesn't require a relay
+# or fill system and instead just assumes the user refills their cup to their
+# set cupSize. The senseHat joystick is used to simulate the triggering of the
+# Ultrasonic cup sensor.
+#
+# Written by Michael Marsland and Nick Milani, April 2022
+# -----------------------------------------------------------
+
 from sense_hat import SenseHat
 import threading
 import time
@@ -16,7 +29,7 @@ class FillSystemSim():
         self.waterData = None
         
     def poll(self):
-        # Ultrasonic sensor triggered, run fill system!
+        # if Joystick Pressed, run fill simulated system!
         if self.cupSensor.triggered():
             self.display.displayMessage("Congratualtions! Go refill your cup!")
             # Start a new thread for the fill system, simulate fill system
@@ -55,36 +68,3 @@ class CupSensorSim():
 
     def triggered(self):
         return self.getDistance() < 3
-
-
-
-# class RelaySim():
-#     def __init__(self):
-#         pass
-
-#     def on(self):
-#         print("RelaySim.on()")
-
-#     def off(self):
-#         print("RelaySim.off()")
-
-# class FlowSensorSim():
-#     def __init__(self):
-#         pass
-
-#     def detectEdge(self, channel):
-#         print("FlowSensorSim.detectEdge()")
-
-#     # Poll the sensor for 'interval' seconds and return the flow rate
-#     def getFlowRate(self, interval):
-
-#         flowRate = random.random()*10
-#         print("Flow rate: {:.3f} L/min\n".format(flowRate))
-#         return flowRate
-
-if __name__ == "__main__":
-    #fs = FillSystemSim()
-    #while True:
-        #fs.poll()
-        #time.sleep(3)
-    pass

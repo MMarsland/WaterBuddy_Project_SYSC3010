@@ -1,3 +1,11 @@
+# -----------------------------------------------------------
+# pyTest unit tests for the cupSensorSim class
+#
+# These unit tests ensure the senseHat Joystick press is detected properly.
+#
+# Written by Michael Marsland, April 2022
+# -----------------------------------------------------------
+
 import sys, time
 sys.path.append('../../../')
 sys.path.append('../../../Simulators')
