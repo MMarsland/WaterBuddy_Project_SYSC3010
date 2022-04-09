@@ -1,20 +1,18 @@
+# -----------------------------------------------------------
+# The BuzzerSim class duck type implements the same functionality
+# as the Buzzer class in buzzer.py allowing the other waterbuddy
+# code to use either the real buzzer or this simulator interchangeably.
+#
+#
+# Written by Michael Marsland, April 2022
+# -----------------------------------------------------------
+
 class BuzzerSim():
     def __init__(self, senseHatDisplay):
         self.senseHatDisplay = senseHatDisplay
     
     def playChime(self, code):
-        # Don't simulate any buzzer funcationality
-        # on "WaterBuddy Minus"
+        # Don't simulate any buzzer functionality
+        # on "WaterBuddy Minus" just have this function
+        # here to implement the buzzer interface
         return
-
-
-        if code == "local" or code == 0:
-            # Locally Spawnned Notification
-            self.senseHatDisplay.showMessage("Local Mesage: ")
-        elif code == "station" or code == 1:
-            # Other Water Buddy Notification
-            self.senseHatDisplay.showMessage("Station Mesage: ")
-        elif code == "application" or code == 2:
-            # Other Application Notification
-            self.senseHatDisplay.showMessage("App Mesage: ")
-        

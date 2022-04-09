@@ -1,4 +1,21 @@
-#Imports
+# -----------------------------------------------------------
+# This file contains the main code for The WaterBuddy project.
+# This file creates and instance of the WaterBuddy class with
+# the given stationID and a flag differentiating if the instantiated
+# WaterBuddy is a simulator (WaterBuddy Minus) or a full system.
+#
+# The WaterBuddy class contains the main() function which is called
+# to start the WaterBuddy system and the loop() function which runs
+# the WaterBuddy's main loop as well as other helper functions for the
+# WaterBuddy that didn't fit in any of the accompanying module classes
+# utilized by the WaterBuddy Code. Further documentantion is included 
+# in the code to describe the functionality of these methods.
+#
+# Written by Michael Marsland, April 2022
+# -----------------------------------------------------------
+
+
+# Imports
 import RPi.GPIO as GPIO 
 import sys
 import time
@@ -24,11 +41,23 @@ from fillSystemSim import FillSystemSim
 
 
 class WaterBuddy:
+    '''The main class for The WaterBuddy System.
+    
+    Each WaterBuddy or WaterBuddy Minus station must instantiate an
+    instance of the WaterBuddy class and call it's main() function.
+    '''
+
     def __init__(self, stationID, simulator=False):
+        '''
+        Instantiates the WaterBuddy class either as a simulator (For the
+        WaterBuddy Minus) or as a full system with the attached fill
+        system hardware. The provided stationID should be unique in the system
+        '''
+
         self.stationID = stationID
         self.waterFrequency = 3600
         self.humidity = 0
-        self.lastHumidiySendTime = None
+        self.lastHumiditySendTime = time.time()
         self.lastFillOrNotificationTime = time.time()
         self.lastAnimationTime = time.time()
 
@@ -49,37 +78,61 @@ class WaterBuddy:
         self.dataChanged = True
 
     def main(self):
+        '''Starts the WaterBuddy running.
+
+        Attempts to establish a connection to the Firebase database or
+        local database and beings running the WaterBuddy loop.
+        '''
+
         self.display.displayMessage("Welcome to WaterBuddy!", "local")
         self.display.startAnimation("smile", durationFrames=6)
 
         self.online = True
         try:
-            if (not self.firebaseAPI.isStationRegistered()):
-                self.firebaseAPI.registerStation(self.stationData)
-        except ConnectionError as e:
-            self.online = False
-            self.display.displayMessage("No Internet Connection...", "local")
-        try:
-            # Get User and Station Data from firebase
+            self.firebaseAPI.ensureStationRegistered()
+
             self.userData = self.firebaseAPI.getUserDataFromStationID()
             self.stationData = self.firebaseAPI.getStationData()
+
         except ConnectionError as e:
-            # Try to get user and station data from local database
+            # Unable to establish a connection to the firebase database
+            self.online = False
+            self.display.displayMessage("No Internet Connection...", "local")
+
+            # Try to get user and station data from local database instead
             self.stationData = self.localDatabase.getStationData()
             self.userData = self.localDatabase.getUserData()
 
-            # Get userdata from owner (From Either Firebase or LocalDatabase)
+            # If there is no distinct user data in the local database or firebaseAPI we cannot run the station.
             if (self.userData.userID == "John Doe"):
-                # We don't have any user data stored in localDatabase
-                #print("This station must be registered to a user to run. Try registering this station through the application or connecting the station to the internet")
                 self.display.displayMessage("This station must be registered to a user to run. Try registering this station through the application or connecting the station to the internet", "local")
                 time.sleep(60)
                 self.main()
                 return
-
+            
         self.loop(1)
         
     def loop(self, delay):
+        '''The main code loop for the WaterBuddy station.
+
+        This loop is run indefinitely while the WaterBuddy station is running.
+        The loop contains several steps:
+        1. Get messages from firebase directed at this station
+        2. Check for changes to this stations data in firebase
+        3. Check for changes to this station's user data in the firebase
+        4. If stationData or userData has changed, update the local database
+        and the waterFrequency of the station.
+        5. Upload the station's humidity to the firebase database
+        6. Run a check to see if the station has come online and can make
+        a connection to the firebase database and if so, upload all water
+        history stored in the local database.
+        7. Poll the ultrasonic sensor to see if a fill should be run
+        8. Check if a fill was just completed by the fill system thread
+        9. Notify the user if the correct amount of time has passed since
+        the last notification or fill
+        10. Dispaly a random animation on the senseHat if the correct amount
+        of time has passed since the last animation
+        '''
         while (True):
             try:
                 loopTime = time.time()
@@ -114,8 +167,8 @@ class WaterBuddy:
                         self.firebaseAPI.updateWaterFrequency(self.waterFrequency)
 
                     # Upload Humidity to Database every delay
-                    if (not self.lastHumidiySendTime or (loopTime - self.lastHumidiySendTime > 5)):
-                        self.lastHumidiySendTime = loopTime
+                    if (loopTime - self.lastHumiditySendTime > 5):
+                        self.lastHumiditySendTime = loopTime
                         # Get Humidity
                         self.humidity = self.sensors.getHumidity()
                         # Send Humidity
@@ -125,14 +178,15 @@ class WaterBuddy:
                         self.firebaseAPI.updateWaterFrequency(self.waterFrequency)
 
                 # Check if we have come online
-                try:
-                    self.firebaseAPI.ensureStationRegistered(self.stationData)
-                    self.online = True
-                    # Now that we are online, Dispatch local "Drink water" notification if required
-                    self.uploadWaterHistory()
+                if not self.online:
+                    try:
+                        self.firebaseAPI.ensureStationRegistered(self.stationData)
+                        self.online = True
+                        # Now that we are online, Dispatch local "Drink water" notification if required
+                        self.uploadWaterHistory()
 
-                except ConnectionError:
-                    self.online = False
+                    except ConnectionError:
+                        self.online = False
 
                 # Poll the ultrasonic sensor (Fill System (Start fill system thread + block another thread from starting))
                 if not self.fillSystem.filling:
@@ -174,6 +228,7 @@ class WaterBuddy:
             time.sleep(delay)
 
     def updateWaterFrequency(self):
+        # -----------------------------------------------------------
         # Basic Hydration Amounts
         # https://www.healthline.com/health/how-much-water-should-I-drink#recommendations
         # https://www.nap.edu/read/10925/chapter/6#144
@@ -193,18 +248,18 @@ class WaterBuddy:
         # We could replace it with age? (https://www.weightwatchers.com/ca/en/article/how-much-water-should-you-drink-every-day)
         # Activity level is a factor! (Add 12oz=355ml) per 30 minutes of exercise (https://www.slenderkitchen.com/article/how-to-calculate-how-much-water-you-should-drink-a-day)
 
-        # Thirst can account for activity level
-        # Parched, Thirsty, Average, Hydrophobic (add 355ml per each level)
+        # "Thirst" accounts for activity level
+        # Parched, Thirsty, Average, Hydrophobic (355ml per each level)
 
         # Hours at desk 8 or number of waking hours 16
         # Amount of water Per day = f(weight, thirst)
         # Number of cups = f(cupSize, Amount of water Per day)
         # cupsPerHour = f(numberOfCups, hours)
         # Water frequency = f(cupsPerHour)
-
         # Very this based on humidity (0=dry , 100=wet)
+        # -----------------------------------------------------------
 
-        workDayHours = 8
+        workDayHours = 8 # For now we will give the user all their required water within their work day
         waterFrequency = 3600
         try:
             mLPerDay = (self.userData.weight*2.2) * 2/3 * 29.5735/1 + 355 * (self.userData.thirst-1) # kg * oz/kg * ml/oz = ml
@@ -223,7 +278,6 @@ class WaterBuddy:
             try:
                 # Upload to Firebase
                 self.firebaseAPI.addWaterHistory(waterData)
-                # Notify Friends
                 return
             except ConnectionError:
                 self.online = False
@@ -232,7 +286,9 @@ class WaterBuddy:
             self.localDatabase.addWaterHistory(waterData)
         
     def uploadWaterHistory(self):
-        # Upload all water history rows to firebase and then delete the enteries from the local database (Would be issues (Double uploads) if we upload some and then go offline... Could fix this by going row by row and deleting as we go)
+        # Upload all water history rows to firebase and then delete the 
+        # entries from the local database (Would be issues (Double uploads) if we upload some 
+        # and then go offline... Could fix this by going row by row and deleting as we go)
         # We could thread this but then need to be careful of going offline while in a thread
         waterHistory = self.localDatabase.getWaterHistory()
 
@@ -242,7 +298,7 @@ class WaterBuddy:
         self.localDatabase.deleteWaterHistory()
 
     def notifyFriends(self, waterData):
-        # For each friend, send a message to each station
+        # For each friend, send a message to each of their statons station
         for friendID in self.userData.friends:
             friendData = self.firebaseAPI.getUserData(friendID)
             for stationID in friendData.stations:
@@ -250,17 +306,21 @@ class WaterBuddy:
                                              message=f"{self.userData.userID} has just finished a glass of water!",
                                              extras={"friendNotification": True})
 
-            # Notify App
+            # For each friend, also send a message to their application
             self.firebaseAPI.sendMessage(dest=friendID, 
                                          message=f"Your friend {self.userData.userID} has just finished a glass of water! Get drinking!",
                                          extras={"friendNotification": True})
 
 
+# The main code for the WaterBuddy system instantiates either a simulator
+# (WaterBuddy Minus) or a full station with the give stationID and calls
+# its main loop to start the station running.
 if __name__ == '__main__':
     try:
-        water_buddy = WaterBuddy("Station 70", simulator=True)
+        water_buddy = WaterBuddy(stationID="Station 70", simulator=True)
         water_buddy.main()
+        
     except KeyboardInterrupt:
-        print("Interrupeted")
+        print("Interrupted")
         GPIO.cleanup()
     print("Exiting")
