@@ -49,6 +49,7 @@ import java.util.Locale;
 
 /**
  * Main Activity for Water Buddy Smart Application
+ * Handles all main activity view changes
  * Tutorials used:
  * https://firebase.google.com/docs/database/android/read-and-write
  */

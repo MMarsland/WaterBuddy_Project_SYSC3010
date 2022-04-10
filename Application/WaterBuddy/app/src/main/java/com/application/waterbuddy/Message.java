@@ -9,10 +9,17 @@ public class Message {
     public String dest;
     public String message;
 
-    public Message(){
-        // Default constructor required for dataSnapshot.getValue(Message.class)
-    }
+    /**
+     * Default constructor required for dataSnapshot.getValue(Message.class)
+     */
+    public Message(){ }
 
+    /**
+     *
+     * @param source String identifier naming the source of the message
+     * @param dest String identifier naming the destination of the message
+     * @param message The message itself
+     */
     public Message(String source, String dest, String message) {
         this.source = source;
         this.dest = dest;

@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 /**
- * Station info for reading/writing from database
+ * Station info for reading/writing from firebase database
  */
 public class Station {
 
@@ -23,10 +23,16 @@ public class Station {
     public boolean mute;
     public HashMap<String,WaterHistory> waterHistory;
 
-    public Station () {
-        // Default constructor required for dataSnapshot.getValue(Station.class)
-    }
+    /**
+     * Default constructor required for dataSnapshot.getValue(Station.class)
+     */
+    public Station () { }
 
+    /**
+     *  Constructor for station information, used for debugging
+     * @param id Station identifier
+     * @param cupSize Default station cupsize
+     */
     public Station (String id, double cupSize) {
         this.cupSize = cupSize;
         this.stationID = id;

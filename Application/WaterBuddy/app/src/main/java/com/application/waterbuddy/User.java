@@ -2,6 +2,9 @@ package com.application.waterbuddy;
 
 import java.util.ArrayList;
 
+/**
+ *  User class template for User sections in Firebase Console
+ */
 public class User {
 
     public String userID;
@@ -16,10 +19,18 @@ public class User {
     public int dailyWater;
     public int weeklyWater;
 
-    public User () {
-        // Default constructor required for dataSnapshot.getValue(User.class)
-    }
+    /**
+     * Default constructor required for dataSnapshot.getValue(User.class)
+     */
+    public User () { }
 
+    /**
+     *  Constructor for creating user accounts, used for new accounts and debugging
+     * @param username Account identifier
+     * @param password Account password
+     * @param stations Any stations registered to the account
+     * @param friends Array of string identifiers, friends registered to the account
+     */
     public User (String username, String password, ArrayList<String> stations, ArrayList<String> friends) {
         this.userID = username;
         passwordHASH = password;
