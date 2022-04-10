@@ -89,7 +89,7 @@ class WaterBuddy:
 
         self.online = True
         try:
-            self.firebaseAPI.ensureStationRegistered()
+            self.firebaseAPI.ensureStationRegistered(self.stationData)
 
             self.userData = self.firebaseAPI.getUserDataFromStationID()
             self.stationData = self.firebaseAPI.getStationData()

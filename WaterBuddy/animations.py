@@ -179,13 +179,13 @@ class Animations():
 
     def getAnimation(self, animationName, durationFrames, interruptable):
         if (animationName == "filling"):
-            return Animation(self.senseHat, [cup_empty, cup_filling, cup_filling2, cup_full], durationFrames, interruptable)
+            return Animation(self.senseHat, [self.cup_empty, self.cup_filling, self.cup_filling2, self.cup_full], durationFrames, interruptable)
         elif (animationName == "smile"):
-            return Animation(self.senseHat, [smile1, smile2], durationFrames, interruptable)
+            return Animation(self.senseHat, [self.smile1, self.smile2], durationFrames, interruptable)
         elif (animationName == "blink"):
-            return Animation(self.senseHat, [blink1, blink2], durationFrames, interruptable)
+            return Animation(self.senseHat, [self.blink1, self.blink2], durationFrames, interruptable)
         elif (animationName == "wink"):
-            return Animation(self.senseHat, [wink1, wink2], durationFrames, interruptable)
+            return Animation(self.senseHat, [self.wink1, self.wink2], durationFrames, interruptable)
 
 class Animation():
     def __init__(self, senseHat, frames, durationFrames, interruptable):
