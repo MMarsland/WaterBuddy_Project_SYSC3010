@@ -13,8 +13,11 @@ TA: Roger Selzer
 
 
 ## Project Summary
-The purpose of this project was to create a smart desk-mounted watering station
-"""Copy the text from the proposal, or design draft?)"""
+The objective of The WaterBuddy is to promote a healthy, productive lifestyle by helping users stay on top of their hydration levels. The WaterBuddy automatically provides users with water and reminds them to drink based on a dynamic schedule that can be configured and tailored to each user. Finally, The WaterBuddy records the user’s daily water consumption metrics into a database for easy analysis and comparison.  
+<br>
+The WaterBuddy is a lightweight, affordable, and portable station connected to a widespread database that allows for scalability by including as many WaterBuddy stations as needed for every user of this product. The WaterBuddy station draws water it uses from a nearby water jug (the same as those found in common water coolers) but the WaterBuddy will allow for this just to be positioned on the ground out of the way of the common workstation unlike other desk mounted water coolers.   
+<br>
+The WaterBuddy System also comes with a companion Android Application taht allows users to adjust their settings as well as view their water data and send messages to their friend's WaterBuddy Stations. For users who do not have the full budget for a complete WaterBuddy system we have also created a WaterBuddy Minus which can be set-up with just a Raspberry Pi and SenseHat. This allows users to track their waterdata and keep in touch with their friends without requiring the full station with the fill system.
 
 ## Repository Structure
 ### [Smartphone Application](Application/WaterBuddy)
