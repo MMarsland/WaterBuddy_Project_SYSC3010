@@ -109,6 +109,10 @@ The WaterBuddy application can be installed by using the pre-built [apk](Applica
 ### WaterBuddy Station
 On startup, the WaterBuddy station's display will scroll through a welcome message, accompanied by a tri-tone buzzer chime. After this, the WaterBuddy is ready to fill your cup. You can open up the smartphone app, create an account and register your station, and then set your cup size and lifestyle metrics. Once the cup size has been set, simply place your up in the WaterBuddy station and let it automatically fill your cup. The WaterBuddy will play different buzzer chimes and show messages on its display whenever a notification arrives. These notifications can be muted from within the app.
 
+
+
+<br>
+
 ### WaterBuddy Minus
 Once the WaterBuddy Minus system is installed and running you should see a welcome message.
 You can then create an account on the app and register the station to yourself using
@@ -136,18 +140,3 @@ The cup size of your station can be edited in the "Cup Size" section and selecti
 
 
 More details on the Water Buddy smart phone application can be found [here](Application/WaterBuddy).
-
-<br>
-
-
-
-
-## REQUIREMENTS (Remove this once done...)
-Some required elements for your top-level Readme.md file:
-
-  - Everything from one of your project report title pages (Group number, your names (no student ID here please), project title, project image, TA name, course code)
-  - A summary of what the project is about (~200 words)
-  - A description of your repo. What is the directory structure and what is (generally) in each top-level directory (test code, GUI, code for RPi1 that drives the car, etc)
-  - Installation instructions (how could someone get your project up and running if they bought all the hardware?)
-  - How to run your system (start this code on RPi1, then launch this code on the AWS server, then initialize...)
-  - How someone will know that their installation is working correctly ("you should see...", or "running these tests should all pass", or...)
