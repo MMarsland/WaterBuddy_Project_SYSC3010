@@ -17,7 +17,7 @@ The objective of The WaterBuddy is to promote a healthy, productive lifestyle by
 <br>
 The WaterBuddy is a lightweight, affordable, and portable station connected to a widespread database that allows for scalability by including as many WaterBuddy stations as needed for every user of this product. The WaterBuddy station draws water it uses from a nearby water jug (the same as those found in common water coolers) but the WaterBuddy will allow for this just to be positioned on the ground out of the way of the common workstation unlike other desk mounted water coolers.   
 <br>
-The WaterBuddy System also comes with a companion Android Application taht allows users to adjust their settings as well as view their water data and send messages to their friend's WaterBuddy Stations. For users who do not have the full budget for a complete WaterBuddy system we have also created a WaterBuddy Minus which can be set-up with just a Raspberry Pi and SenseHat. This allows users to track their waterdata and keep in touch with their friends without requiring the full station with the fill system.
+The WaterBuddy System also comes with a companion Android Application that allows users to adjust their settings as well as view their water data and send messages to their friend's WaterBuddy Stations. For users who do not have the full budget for a complete WaterBuddy system we have also created a WaterBuddy Minus which can be set-up with just a Raspberry Pi and SenseHat. This allows users to track their waterdata and keep in touch with their friends without requiring the full station with the fill system.
 
 ## Repository Structure
 ### [Smartphone Application](Application/WaterBuddy)
@@ -28,11 +28,11 @@ The WaterBuddy System also comes with a companion Android Application taht allow
 ### [Main Application Code](Application/WaterBuddy/app/src/main/java/com/application/waterbuddy)
   - The main code for the smart phone application can be found here. This includes templates for reading data from the Firebase database, main activity logic for handling view changes, and a DatabaseInterface class that creates references to and updates Firebase database information.
 
-### [Application Layout](Application\WaterBuddy\app\src\main\res\layout)
+### [Application Layout](Application/WaterBuddy/app/src/main/res/layout)
   - The main application layout can be found in the activity_main.xml file.
   Other xml files in this directory are for pop up windows that are featured in the application. Button designs can be found inside the res/drawables folder.
 
-### [Application Tests](Application\WaterBuddy\app\src\test\java\com\application\waterbuddy)
+### [Application Tests](Application/WaterBuddy/app/src/androidTest/java/com/application/waterbuddy)
   - JUnit tests are kept here, these tests are for testing the account creation
   and editing features and confirming that data is set correctly on the Firebase console.
 <br>
