@@ -12,6 +12,8 @@ relay = Relay(26)
 flowSensor = FlowSensor(22)
 buzzer = Buzzer(12)
 
+# Infinite loop polls cup sensor, if cup is detected, turn relay on,
+# play buzzer chime and poll flow sensor 3 times, then turn relay off
 while 1:
     try:
         distance = cupSensor.getDistance()

@@ -45,6 +45,7 @@ class FillSystem():
         # a new waterdata with the amount filled
         self.waterData = WaterData(amount=amount)
 
+        # Prevent overflowing
         distance = 0
         while distance < 10:
             distance = self.cupSensor.getDistance()
@@ -90,7 +91,7 @@ class CupSensor():
         print("Distance: {:.3f} cm\n".format(distance))
         return distance
 
-    # Return true if sensor distance is < 3cm
+    # Return true if sensor distance is < 4cm
     def triggered(self):
         return self.getDistance() < 4
 
@@ -147,6 +148,6 @@ class FlowSensor():
         _enable = 0
 
         # Frequency to flow rate conversion from sensor datasheet
-        flowRate = ((_edgeCount / interval) / 11)*(1000/60)
+        flowRate = ((_edgeCount / interval) / 11) * (1000/60)
         print("Flow rate: {:.3f} mL/sec\n".format(flowRate))
         return flowRate

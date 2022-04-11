@@ -41,4 +41,3 @@ class Buzzer():
             pwm.ChangeFrequency(3000)
             time.sleep(1)
             pwm.stop
-            # More cases for more chime options, drink reminders, entertainment chimes, etc...
