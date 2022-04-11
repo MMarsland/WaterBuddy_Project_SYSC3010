@@ -71,7 +71,7 @@ The WaterBuddy station requires the following hardware components:
 Follow the schematic below to connect the hardware components to the RPi with the SenseHat and long-pinned header attached.
 
 <p align="center">
-  <img src="Images/Schematic.png" width="400" height="300">
+  <img src="Images/Schematic.PNG" width="400" height="300">
 </p>
 
 In order to set up the WaterBuddy station, clone this repository to your Raspberry Pi. Then in the file:
