@@ -3,7 +3,7 @@ Group: L3_G7
 TA: Roger Selzer  
 ### Group Members
   - Michael Marsland - Computer Systems Engineering
-  - Nick Milani - ...
+  - Nick Milani - Computer Systems Engineering
   - Caleb Turcotte - Computer Systems Engineering
 
 ## The WaterBuddy
@@ -55,6 +55,37 @@ for the hardware as well as the WaterBuddy software.
 member completed each part of the project and how we progressed over the term.
 
 ## Installation Instructions
+### WaterBuddy Station
+The WaterBuddy station requires the following hardware components:
+  - Raspberry Pi 4B
+  - SenseHat Module with long-pinned headers
+  - RCWL-1601 Ultrasonic sensor
+  - YF-B1 Flow sensor
+  - Piezo buzzer
+  - Submersible DC water pump
+  - 5V Relay module
+  - 12V DC power supply
+  - 1x 1kOhm Resistor
+  - 1x 2kOhm Resistor
+
+Follow the schematic below to connect the hardware components to the RPi with the SenseHat and long-pinned header attached.
+
+<p align="center">
+  <img src="Images/Schematic.png" width="400" height="300">
+</p>
+
+In order to set up the WaterBuddy station, clone this repository to your Raspberry Pi. Then in the file:
+[waterbuddy.py](WaterBuddy/waterbuddy.py) you can edit line 261 to give your station an ID and set it as a physical station. \
+    `water_buddy = WaterBuddy("[your-desired-station-ID-here]", simulator=False)`
+
+You will be required to install python3 and the following python libraries:
+  - pyrebase
+        pip install Pyrebase
+
+Finally, you can start the station by running waterbuddy.py
+    python3 waterbuddy.py
+
+
 ### WaterBuddy Minus
 In order to set up a WaterBuddy Simulator you will require a RaspberryPi with an attached
 SenseHat Module. With just these components you can set-up a WaterBuddy Minus which allows
@@ -75,6 +106,9 @@ Finally, you can start the station by running waterbuddy.py
 The WaterBuddy application can be installed by using the pre-built [apk](Application/WaterBuddy/build/water_buddy.apk). Alternatively the application can be built inside Android Studio by downloading and opening the [Application/WaterBuddy](Application/WaterBuddy) project.
 
 ## Running Instructions / User Instructions (How to use the system/What they should see)
+### WaterBuddy Station
+On startup, the WaterBuddy station's display will scroll through a welcome message, accompanied by a tri-tone buzzer chime. After this, the WaterBuddy is ready to fill your cup. You can open up the smartphone app, create an account and register your station, and then set your cup size and lifestyle metrics. Once the cup size has been set, simply place your up in the WaterBuddy station and let it automatically fill your cup. The WaterBuddy will play different buzzer chimes and show messages on its display whenever a notification arrives. These notifications can be muted from within the app.
+
 ### WaterBuddy Minus
 Once the WaterBuddy Minus system is installed and running you should see a welcome message.
 You can then create an account on the app and register the station to yourself using
